@@ -1,0 +1,2970 @@
+import React, { useState, useEffect, useRef } from "react";
+import { Shuffle, Heart, ShoppingCart, Clock, Users, X, Check, ChefHat, Search, Trash2 } from "lucide-react";
+
+
+// ---------------------------------------------------------------------------
+// Datos: almuerzos colombianos sencillos del día a día
+// ---------------------------------------------------------------------------
+const RECETAS = [
+  {
+    "id": "ajiaco-santafereno",
+    "nombre": "Ajiaco Santafereño",
+    "tiempo": 90,
+    "porciones": 6,
+    "tags": [
+      "con-pollo",
+      "sopa"
+    ],
+    "ingredientes": [
+      "1 kg de pechuga de pollo",
+      "1 kg de papa criolla",
+      "500 g de papa pastusa",
+      "500 g de papa sabanera",
+      "3 mazorcas partidas en trozos",
+      "4 ramas de guascas",
+      "2 tallos de cebolla larga",
+      "2 dientes de ajo",
+      "1 cebolla cabezona",
+      "1 taza de crema de leche",
+      "2 cdas de alcaparras",
+      "2 aguacates"
+    ],
+    "pasos": [
+      "Cocinar el pollo con cebolla, ajo y cebolla larga en agua hasta que esté tierno; reservar y desmechar.",
+      "En el mismo caldo agregar las papas peladas y en trozos junto con las mazorcas.",
+      "Cocinar a fuego medio revolviendo para que la papa criolla se deshaga y espese el caldo.",
+      "Añadir las guascas y el pollo desmechado; cocinar 15 minutos más.",
+      "Rectificar sal y servir caliente acompañado de crema de leche, alcaparras y aguacate."
+    ]
+  },
+  {
+    "id": "sancocho-de-gallina",
+    "nombre": "Sancocho de Gallina",
+    "tiempo": 115,
+    "porciones": 8,
+    "tags": [
+      "con-pollo",
+      "sopa"
+    ],
+    "ingredientes": [
+      "1 gallina despresada (1.5 kg)",
+      "3 plátanos verdes",
+      "1 kg de yuca",
+      "3 papas grandes",
+      "2 mazorcas",
+      "1 cebolla cabezona",
+      "4 dientes de ajo",
+      "1 cdta de comino",
+      "2 tallos de cebolla larga",
+      "Cilantro al gusto"
+    ],
+    "pasos": [
+      "Sofreír la gallina con cebolla, ajo y comino hasta dorar ligeramente.",
+      "Agregar agua suficiente y cocinar a fuego medio por 45 minutos.",
+      "Añadir yuca, plátano y mazorca; cocinar 20 minutos más.",
+      "Incorporar las papas y cocinar hasta que todo esté blando.",
+      "Ajustar sal, agregar cilantro picado y servir con arroz y aguacate aparte."
+    ]
+  },
+  {
+    "id": "sancocho-de-pescado-costeno",
+    "nombre": "Sancocho de Pescado Costeño",
+    "tiempo": 60,
+    "porciones": 6,
+    "tags": [
+      "con-pescado",
+      "sopa"
+    ],
+    "ingredientes": [
+      "1 kg de pescado (bocachico o mojarra)",
+      "1 plátano verde",
+      "500 g de yuca",
+      "1 taza de leche de coco",
+      "1 cebolla cabezona",
+      "2 tomates",
+      "2 dientes de ajo",
+      "Cilantro al gusto",
+      "1 limón"
+    ],
+    "pasos": [
+      "Preparar un hogao con cebolla, tomate y ajo picados.",
+      "Agregar agua y leche de coco, llevar a hervor.",
+      "Añadir yuca y plátano en trozos, cocinar 20 minutos.",
+      "Incorporar el pescado en postas y cocinar 10-12 minutos sin batir demasiado.",
+      "Servir con jugo de limón y cilantro fresco por encima."
+    ]
+  },
+  {
+    "id": "cuchuco-de-trigo-con-espinazo",
+    "nombre": "Cuchuco de Trigo con Espinazo",
+    "tiempo": 585,
+    "porciones": 6,
+    "tags": [
+      "con-cerdo",
+      "sopa",
+      "economico"
+    ],
+    "ingredientes": [
+      "1 taza de cuchuco de trigo remojado",
+      "500 g de espinazo de cerdo",
+      "2 papas picadas",
+      "1 taza de arveja verde",
+      "1 cebolla larga",
+      "2 dientes de ajo",
+      "Cilantro al gusto"
+    ],
+    "pasos": [
+      "Cocinar el espinazo en agua con cebolla y ajo hasta ablandar (45 min).",
+      "Agregar el cuchuco de trigo escurrido y cocinar revolviendo para que no se pegue.",
+      "Añadir la papa y la arveja, cocinar 25 minutos más hasta espesar.",
+      "Rectificar sal y agregar cilantro al servir."
+    ]
+  },
+  {
+    "id": "mute-santandereano",
+    "nombre": "Mute Santandereano",
+    "tiempo": 620,
+    "porciones": 8,
+    "tags": [
+      "con-carne",
+      "sopa"
+    ],
+    "ingredientes": [
+      "1 taza de maíz mute remojado",
+      "300 g de garbanzos remojados",
+      "300 g de fríjol cabecita negra remojado",
+      "500 g de costilla de res",
+      "300 g de papa",
+      "1 cebolla cabezona",
+      "2 dientes de ajo",
+      "Cilantro y cebolla larga al gusto"
+    ],
+    "pasos": [
+      "Cocinar la costilla con cebolla y ajo hasta que esté tierna.",
+      "Agregar el maíz mute, garbanzos y fríjol; cocinar a fuego lento por 1 hora.",
+      "Añadir la papa picada y cocinar 20 minutos más hasta espesar.",
+      "Ajustar sal y servir bien caliente con cilantro picado."
+    ]
+  },
+  {
+    "id": "caldo-de-costilla",
+    "nombre": "Caldo de Costilla",
+    "tiempo": 55,
+    "porciones": 4,
+    "tags": [
+      "con-carne",
+      "sopa",
+      "economico"
+    ],
+    "ingredientes": [
+      "600 g de costilla de res",
+      "2 papas picadas",
+      "1 cebolla larga",
+      "2 dientes de ajo",
+      "Cilantro al gusto",
+      "1 huevo por porción (opcional)"
+    ],
+    "pasos": [
+      "Cocinar la costilla en agua con cebolla y ajo hasta ablandar.",
+      "Agregar la papa y cocinar hasta que se deshaga un poco y espese el caldo.",
+      "Servir muy caliente, opcionalmente con un huevo escalfado dentro.",
+      "Espolvorear cilantro picado antes de servir."
+    ]
+  },
+  {
+    "id": "caldo-de-papa-criolla",
+    "nombre": "Caldo de Papa Criolla",
+    "tiempo": 35,
+    "porciones": 4,
+    "tags": [
+      "vegetariano",
+      "sopa",
+      "economico"
+    ],
+    "ingredientes": [
+      "600 g de papa criolla",
+      "1 cebolla larga",
+      "2 dientes de ajo",
+      "Cilantro al gusto",
+      "1 cda de mantequilla",
+      "Sal y comino al gusto"
+    ],
+    "pasos": [
+      "Cocinar la papa criolla pelada en agua con cebolla y ajo hasta que se deshaga.",
+      "Triturar parcialmente con una cuchara para espesar el caldo.",
+      "Agregar mantequilla y comino, cocinar 5 minutos más.",
+      "Servir con cilantro fresco picado."
+    ]
+  },
+  {
+    "id": "sopa-de-guineo-platano",
+    "nombre": "Sopa de Guineo (Plátano)",
+    "tiempo": 40,
+    "porciones": 4,
+    "tags": [
+      "con-carne",
+      "sopa",
+      "economico"
+    ],
+    "ingredientes": [
+      "2 plátanos verdes en trozos",
+      "300 g de costilla o carne de res",
+      "1 cebolla",
+      "2 dientes de ajo",
+      "Cilantro al gusto",
+      "1 tomate picado"
+    ],
+    "pasos": [
+      "Sofreír cebolla, ajo y tomate para hacer el hogao base.",
+      "Agregar la carne y agua; cocinar hasta que esté tierna.",
+      "Añadir el plátano en trozos y cocinar 20 minutos hasta ablandar.",
+      "Rectificar sal y servir con cilantro fresco."
+    ]
+  },
+  {
+    "id": "sopa-de-arroz-con-pollo",
+    "nombre": "Sopa de Arroz con Pollo",
+    "tiempo": 40,
+    "porciones": 4,
+    "tags": [
+      "con-pollo",
+      "sopa",
+      "economico"
+    ],
+    "ingredientes": [
+      "400 g de pechuga de pollo",
+      "1/2 taza de arroz",
+      "1 zanahoria picada",
+      "1 papa picada",
+      "1 cebolla larga",
+      "2 dientes de ajo",
+      "Cilantro al gusto"
+    ],
+    "pasos": [
+      "Cocinar el pollo en agua con cebolla y ajo hasta que esté tierno; desmechar.",
+      "En el mismo caldo agregar la zanahoria y la papa, cocinar 10 minutos.",
+      "Añadir el arroz y cocinar 15 minutos más hasta que esté suave.",
+      "Incorporar el pollo desmechado y servir con cilantro."
+    ]
+  },
+  {
+    "id": "cocido-boyacense",
+    "nombre": "Cocido Boyacense",
+    "tiempo": 80,
+    "porciones": 6,
+    "tags": [
+      "con-cerdo",
+      "sopa"
+    ],
+    "ingredientes": [
+      "300 g de habas",
+      "300 g de arveja verde",
+      "300 g de papa criolla",
+      "300 g de papa sabanera",
+      "2 mazorcas",
+      "200 g de cidra",
+      "300 g de costilla de cerdo",
+      "1 cebolla larga",
+      "2 dientes de ajo"
+    ],
+    "pasos": [
+      "Cocinar la costilla de cerdo con cebolla y ajo hasta ablandar.",
+      "Agregar habas, arveja, mazorca y cidra; cocinar 20 minutos.",
+      "Añadir las papas y cocinar hasta que todo esté tierno y el caldo espese.",
+      "Rectificar sal y servir con ají casero."
+    ]
+  },
+  {
+    "id": "sancocho-trifasico",
+    "nombre": "Sancocho Trifásico",
+    "tiempo": 105,
+    "porciones": 8,
+    "tags": [
+      "con-pollo",
+      "con-carne",
+      "con-cerdo",
+      "sopa"
+    ],
+    "ingredientes": [
+      "500 g de gallina",
+      "500 g de costilla de res",
+      "500 g de costilla de cerdo",
+      "3 plátanos verdes",
+      "1 kg de yuca",
+      "2 mazorcas",
+      "1 cebolla cabezona",
+      "4 dientes de ajo",
+      "Cilantro al gusto"
+    ],
+    "pasos": [
+      "Cocinar las tres carnes juntas con cebolla y ajo hasta que estén tiernas.",
+      "Agregar la yuca y el plátano en trozos, cocinar 25 minutos.",
+      "Añadir la mazorca y cocinar 15 minutos más.",
+      "Ajustar sal y servir con arroz blanco y aguacate."
+    ]
+  },
+  {
+    "id": "sopa-de-lentejas-con-verduras",
+    "nombre": "Sopa de Lentejas con Verduras",
+    "tiempo": 45,
+    "porciones": 6,
+    "tags": [
+      "vegetariano",
+      "sopa",
+      "economico"
+    ],
+    "ingredientes": [
+      "2 tazas de lentejas",
+      "1 zanahoria picada",
+      "1 papa picada",
+      "1 cebolla",
+      "2 dientes de ajo",
+      "1 tomate picado",
+      "Comino al gusto"
+    ],
+    "pasos": [
+      "Sofreír cebolla, ajo y tomate en un poco de aceite.",
+      "Agregar las lentejas lavadas y agua suficiente.",
+      "Añadir zanahoria y papa; cocinar 25-30 minutos hasta que las lentejas estén blandas.",
+      "Sazonar con comino y sal, servir caliente."
+    ]
+  },
+  {
+    "id": "bandeja-paisa",
+    "nombre": "Bandeja Paisa",
+    "tiempo": 75,
+    "porciones": 4,
+    "tags": [
+      "con-carne",
+      "con-cerdo"
+    ],
+    "ingredientes": [
+      "2 tazas de fríjoles cargamanto cocidos",
+      "4 porciones de carne en polvo (molida)",
+      "4 chicharrones",
+      "4 huevos fritos",
+      "2 plátanos maduros",
+      "2 tazas de arroz blanco",
+      "1 aguacate",
+      "4 arepas pequeñas",
+      "Hogao (tomate y cebolla)"
+    ],
+    "pasos": [
+      "Cocinar los fríjoles con hogao hasta que estén cremosos.",
+      "Dorar la carne molida sazonada con ajo, sal y comino.",
+      "Freír el chicharrón, el plátano maduro y los huevos por separado.",
+      "Cocinar el arroz blanco y calentar las arepas.",
+      "Armar la bandeja con todos los componentes y acompañar con aguacate."
+    ]
+  },
+  {
+    "id": "sobrebarriga-sudada",
+    "nombre": "Sobrebarriga Sudada",
+    "tiempo": 135,
+    "porciones": 6,
+    "tags": [
+      "con-carne"
+    ],
+    "ingredientes": [
+      "1.2 kg de sobrebarriga",
+      "2 tomates",
+      "1 cebolla cabezona",
+      "3 dientes de ajo",
+      "1 cerveza o caldo de res",
+      "Cilantro y comino al gusto"
+    ],
+    "pasos": [
+      "Sellar la sobrebarriga en una olla con aceite caliente.",
+      "Agregar cebolla, tomate y ajo picados, y sofreír unos minutos.",
+      "Añadir el líquido (cerveza o caldo) y cocinar tapado a fuego bajo por 1 hora 30 min hasta ablandar.",
+      "Retirar la carne, cortarla en tajadas contra la fibra y bañarla con la salsa reducida.",
+      "Servir con papa, arroz o yuca."
+    ]
+  },
+  {
+    "id": "carne-desmechada-guisada",
+    "nombre": "Carne Desmechada Guisada",
+    "tiempo": 105,
+    "porciones": 5,
+    "tags": [
+      "con-carne"
+    ],
+    "ingredientes": [
+      "800 g de falda o posta de res",
+      "2 tomates",
+      "1 cebolla",
+      "3 dientes de ajo",
+      "1 pimentón",
+      "Comino y color al gusto"
+    ],
+    "pasos": [
+      "Cocinar la carne en agua con un poco de sal hasta que esté muy blanda.",
+      "Desmechar la carne con la mano o dos tenedores.",
+      "Sofreír cebolla, tomate, pimentón y ajo hasta formar un guiso espeso.",
+      "Incorporar la carne desmechada y cocinar 15 minutos más para que absorba el sabor.",
+      "Servir con arroz blanco y patacón."
+    ]
+  },
+  {
+    "id": "albondigas-en-salsa",
+    "nombre": "Albóndigas en Salsa",
+    "tiempo": 50,
+    "porciones": 4,
+    "tags": [
+      "con-carne"
+    ],
+    "ingredientes": [
+      "500 g de carne molida de res",
+      "1 huevo",
+      "1/2 taza de pan rallado",
+      "2 tomates",
+      "1 cebolla",
+      "2 dientes de ajo",
+      "Comino al gusto"
+    ],
+    "pasos": [
+      "Mezclar la carne molida con huevo, pan rallado, sal y comino; formar albóndigas.",
+      "Sofreír cebolla, tomate y ajo para hacer la salsa.",
+      "Agregar un poco de agua a la salsa y llevar a hervor.",
+      "Incorporar las albóndigas y cocinar tapado 20 minutos, moviendo la olla de vez en cuando.",
+      "Servir con arroz o espagueti."
+    ]
+  },
+  {
+    "id": "bistec-a-caballo",
+    "nombre": "Bistec a Caballo",
+    "tiempo": 25,
+    "porciones": 2,
+    "tags": [
+      "con-carne",
+      "rapido"
+    ],
+    "ingredientes": [
+      "2 bistecs de res",
+      "2 huevos",
+      "1 cebolla en aros",
+      "Arroz blanco cocido",
+      "Sal, pimienta y comino al gusto"
+    ],
+    "pasos": [
+      "Sazonar los bistecs con sal, pimienta y comino.",
+      "Freír los bistecs en una sartén caliente 3-4 minutos por lado.",
+      "En la misma sartén dorar la cebolla en aros.",
+      "Freír los huevos por separado y colocar uno sobre cada bistec.",
+      "Servir con arroz blanco y la cebolla dorada encima."
+    ]
+  },
+  {
+    "id": "carne-en-bistec-guisada-con-papa",
+    "nombre": "Carne en Bistec Guisada con Papa",
+    "tiempo": 50,
+    "porciones": 4,
+    "tags": [
+      "con-carne",
+      "economico"
+    ],
+    "ingredientes": [
+      "600 g de bistec de res",
+      "3 papas medianas",
+      "1 cebolla",
+      "2 tomates",
+      "2 dientes de ajo",
+      "Comino al gusto"
+    ],
+    "pasos": [
+      "Sofreír cebolla, tomate y ajo hasta formar un guiso.",
+      "Agregar el bistec cortado en tiras y dorar ligeramente.",
+      "Añadir la papa en trozos y un poco de agua.",
+      "Cocinar tapado 20-25 minutos hasta que la papa esté blanda y la salsa espese.",
+      "Servir con arroz y ensalada."
+    ]
+  },
+  {
+    "id": "lengua-en-salsa",
+    "nombre": "Lengua en Salsa",
+    "tiempo": 120,
+    "porciones": 6,
+    "tags": [
+      "con-carne"
+    ],
+    "ingredientes": [
+      "1 lengua de res (1.2 kg)",
+      "2 tomates",
+      "1 cebolla",
+      "1 pimentón",
+      "3 dientes de ajo",
+      "1 hoja de laurel",
+      "Comino al gusto"
+    ],
+    "pasos": [
+      "Cocinar la lengua en agua con laurel hasta que esté tierna (1 h 30 min); pelarla y cortarla en tajadas.",
+      "Sofreír cebolla, tomate, pimentón y ajo para hacer el guiso.",
+      "Incorporar la lengua en tajadas y un poco del caldo de cocción.",
+      "Cocinar 15 minutos más para que tome sabor.",
+      "Servir con papa o arroz."
+    ]
+  },
+  {
+    "id": "picada-colombiana",
+    "nombre": "Picada Colombiana",
+    "tiempo": 50,
+    "porciones": 6,
+    "tags": [
+      "con-carne",
+      "con-cerdo"
+    ],
+    "ingredientes": [
+      "300 g de chorizo",
+      "300 g de morcilla",
+      "300 g de chicharrón",
+      "400 g de carne de res en trozos",
+      "2 plátanos maduros",
+      "Papa criolla",
+      "Arepas pequeñas"
+    ],
+    "pasos": [
+      "Asar o freír el chorizo, la morcilla y la carne por separado.",
+      "Freír el chicharrón hasta que quede crocante.",
+      "Freír el plátano maduro en tajadas y la papa criolla.",
+      "Cortar todo en trozos pequeños para compartir.",
+      "Servir en una bandeja grande con ají y arepas."
+    ]
+  },
+  {
+    "id": "carne-asada-sencilla",
+    "nombre": "Carne Asada Sencilla",
+    "tiempo": 90,
+    "porciones": 4,
+    "tags": [
+      "con-carne"
+    ],
+    "ingredientes": [
+      "800 g de sobrebarriga o falda para asar",
+      "2 dientes de ajo",
+      "Jugo de 1 limón",
+      "Sal, pimienta y comino al gusto",
+      "1 cebolla en tajadas"
+    ],
+    "pasos": [
+      "Marinar la carne con ajo, limón, sal y comino por al menos 1 hora.",
+      "Asar en parrilla o sartén caliente 5-6 minutos por lado según el grosor.",
+      "Dejar reposar la carne 5 minutos antes de cortar.",
+      "Cortar en tajadas contra la fibra y servir con cebolla asada."
+    ]
+  },
+  {
+    "id": "canelon-de-carne-casero",
+    "nombre": "Canelón de Carne Casero",
+    "tiempo": 70,
+    "porciones": 6,
+    "tags": [
+      "con-carne"
+    ],
+    "ingredientes": [
+      "250 g de pasta para canelones",
+      "500 g de carne molida",
+      "1 taza de salsa de tomate",
+      "1 taza de queso mozzarella rallado",
+      "1 cebolla",
+      "2 dientes de ajo"
+    ],
+    "pasos": [
+      "Sofreír la carne molida con cebolla y ajo hasta dorar.",
+      "Cocinar la pasta para canelones según las instrucciones del paquete.",
+      "Rellenar cada canelón con la carne y colocarlos en un molde para horno.",
+      "Cubrir con salsa de tomate y queso rallado.",
+      "Hornear a 180°C durante 20 minutos hasta gratinar."
+    ]
+  },
+  {
+    "id": "sudado-de-carne-con-papa",
+    "nombre": "Sudado de Carne con Papa",
+    "tiempo": 55,
+    "porciones": 4,
+    "tags": [
+      "con-carne",
+      "economico"
+    ],
+    "ingredientes": [
+      "600 g de carne de res en trozos",
+      "4 papas medianas",
+      "1 cebolla",
+      "2 tomates",
+      "2 dientes de ajo",
+      "Cilantro y comino al gusto"
+    ],
+    "pasos": [
+      "Sofreír cebolla, tomate y ajo para el hogao.",
+      "Agregar la carne y dorar unos minutos.",
+      "Añadir agua y cocinar tapado hasta que la carne esté tierna (25-30 min).",
+      "Incorporar la papa y cocinar hasta que esté blanda.",
+      "Servir con arroz blanco y cilantro fresco."
+    ]
+  },
+  {
+    "id": "chuletas-de-res-a-la-plancha",
+    "nombre": "Chuletas de Res a la Plancha",
+    "tiempo": 25,
+    "porciones": 4,
+    "tags": [
+      "con-carne",
+      "rapido"
+    ],
+    "ingredientes": [
+      "4 chuletas de res",
+      "2 dientes de ajo",
+      "Jugo de limón",
+      "Sal y pimienta al gusto",
+      "Aceite de oliva"
+    ],
+    "pasos": [
+      "Sazonar las chuletas con ajo machacado, limón, sal y pimienta.",
+      "Calentar una plancha o sartén con un poco de aceite.",
+      "Cocinar las chuletas 4-5 minutos por lado según el grosor.",
+      "Dejar reposar 3 minutos antes de servir con ensalada o papa."
+    ]
+  },
+  {
+    "id": "ropa-vieja-de-res",
+    "nombre": "Ropa Vieja de Res",
+    "tiempo": 90,
+    "porciones": 5,
+    "tags": [
+      "con-carne"
+    ],
+    "ingredientes": [
+      "700 g de falda de res",
+      "1 pimentón",
+      "1 cebolla",
+      "2 tomates",
+      "3 dientes de ajo",
+      "1 taza de arvejas",
+      "Comino al gusto"
+    ],
+    "pasos": [
+      "Cocinar la falda en agua hasta que esté muy tierna; desmechar en tiras finas.",
+      "Sofreír cebolla, pimentón, tomate y ajo hasta formar un guiso.",
+      "Incorporar la carne desmechada y las arvejas.",
+      "Cocinar 15-20 minutos a fuego medio hasta que se integren los sabores.",
+      "Servir con arroz blanco y plátano maduro."
+    ]
+  },
+  {
+    "id": "higado-encebollado",
+    "nombre": "Higado Encebollado",
+    "tiempo": 25,
+    "porciones": 4,
+    "tags": [
+      "con-carne",
+      "economico",
+      "rapido"
+    ],
+    "ingredientes": [
+      "600 g de hígado de res en tajadas",
+      "2 cebollas cabezonas en aros",
+      "2 dientes de ajo",
+      "Vinagre al gusto",
+      "Sal y pimienta"
+    ],
+    "pasos": [
+      "Marinar el hígado con un poco de vinagre, sal y pimienta 10 minutos.",
+      "Freír las cebollas en aros hasta que estén doradas y reservar.",
+      "En la misma sartén sellar el hígado 2-3 minutos por lado (no cocinar de más).",
+      "Servir el hígado cubierto con la cebolla encebollada.",
+      "Acompañar con arroz y papa."
+    ]
+  },
+  {
+    "id": "pollo-sudado",
+    "nombre": "Pollo Sudado",
+    "tiempo": 50,
+    "porciones": 4,
+    "tags": [
+      "con-pollo",
+      "economico"
+    ],
+    "ingredientes": [
+      "1 pollo despresado (1.2 kg)",
+      "2 tomates",
+      "1 cebolla",
+      "3 dientes de ajo",
+      "2 papas medianas",
+      "Comino y color al gusto"
+    ],
+    "pasos": [
+      "Sofreír cebolla, tomate y ajo hasta formar un hogao espeso.",
+      "Agregar las presas de pollo y dorar ligeramente.",
+      "Añadir un poco de agua y cocinar tapado 20 minutos.",
+      "Incorporar la papa en trozos y cocinar hasta que esté blanda.",
+      "Servir con arroz blanco."
+    ]
+  },
+  {
+    "id": "pollo-guisado-con-verduras",
+    "nombre": "Pollo Guisado con Verduras",
+    "tiempo": 45,
+    "porciones": 4,
+    "tags": [
+      "con-pollo",
+      "economico"
+    ],
+    "ingredientes": [
+      "600 g de pechuga o presas de pollo",
+      "1 zanahoria",
+      "1 pimentón",
+      "1 cebolla",
+      "2 tomates",
+      "2 dientes de ajo",
+      "Arvejas al gusto"
+    ],
+    "pasos": [
+      "Sofreír cebolla, tomate, pimentón y ajo.",
+      "Agregar el pollo y dorar por ambos lados.",
+      "Añadir la zanahoria y arvejas junto con un poco de agua.",
+      "Cocinar tapado 20 minutos hasta que el pollo esté cocido y la salsa espese.",
+      "Servir con arroz o puré de papa."
+    ]
+  },
+  {
+    "id": "pollo-asado-al-horno",
+    "nombre": "Pollo Asado al Horno",
+    "tiempo": 195,
+    "porciones": 6,
+    "tags": [
+      "con-pollo"
+    ],
+    "ingredientes": [
+      "1 pollo entero (1.8 kg)",
+      "4 dientes de ajo",
+      "Jugo de 2 limones",
+      "1 cdta de mostaza",
+      "Sal, pimienta y pimentón al gusto",
+      "1 cebolla en trozos"
+    ],
+    "pasos": [
+      "Marinar el pollo con ajo, limón, mostaza, sal y pimentón durante al menos 2 horas.",
+      "Precalentar el horno a 200°C.",
+      "Colocar el pollo en una bandeja con la cebolla alrededor.",
+      "Hornear 50-60 minutos hasta que esté dorado y el jugo salga claro.",
+      "Dejar reposar 10 minutos antes de trinchar."
+    ]
+  },
+  {
+    "id": "arroz-con-pollo",
+    "nombre": "Arroz con Pollo",
+    "tiempo": 50,
+    "porciones": 6,
+    "tags": [
+      "con-pollo"
+    ],
+    "ingredientes": [
+      "500 g de pechuga de pollo desmechada",
+      "2 tazas de arroz",
+      "1 taza de arveja",
+      "1 zanahoria picada",
+      "1 pimentón",
+      "1 cebolla",
+      "Color y comino al gusto"
+    ],
+    "pasos": [
+      "Cocinar el pollo, desmecharlo y reservar el caldo.",
+      "Sofreír cebolla, pimentón y zanahoria en un poco de aceite.",
+      "Agregar el arroz y sofreír 2 minutos, luego añadir el caldo de pollo.",
+      "Incorporar arveja y pollo desmechado; cocinar tapado hasta que el arroz esté listo.",
+      "Dejar reposar 5 minutos antes de servir."
+    ]
+  },
+  {
+    "id": "pollo-apanado",
+    "nombre": "Pollo Apanado",
+    "tiempo": 35,
+    "porciones": 4,
+    "tags": [
+      "con-pollo",
+      "economico"
+    ],
+    "ingredientes": [
+      "4 pechugas de pollo fileteadas",
+      "2 huevos",
+      "1 taza de pan rallado",
+      "Harina",
+      "Sal, pimienta y ajo en polvo al gusto"
+    ],
+    "pasos": [
+      "Sazonar las pechugas fileteadas con sal, pimienta y ajo.",
+      "Pasar cada filete por harina, luego huevo batido y por último pan rallado.",
+      "Freír en aceite caliente 3-4 minutos por lado hasta dorar.",
+      "Escurrir en papel absorbente y servir con arroz y ensalada."
+    ]
+  },
+  {
+    "id": "pollo-a-la-plancha-con-vegetales",
+    "nombre": "Pollo a la Plancha con Vegetales",
+    "tiempo": 25,
+    "porciones": 2,
+    "tags": [
+      "con-pollo",
+      "economico",
+      "rapido",
+      "saludable"
+    ],
+    "ingredientes": [
+      "2 pechugas de pollo",
+      "1 calabacín",
+      "1 zanahoria",
+      "1 pimentón",
+      "Sal, pimienta y orégano al gusto",
+      "Aceite de oliva"
+    ],
+    "pasos": [
+      "Sazonar las pechugas con sal, pimienta y orégano.",
+      "Cocinar en plancha caliente 5-6 minutos por lado.",
+      "Saltear los vegetales en un poco de aceite hasta que estén tiernos pero crocantes.",
+      "Servir el pollo acompañado de los vegetales salteados."
+    ]
+  },
+  {
+    "id": "canasta-de-pollo-con-papas-criollas",
+    "nombre": "Canasta de Pollo con Papas Criollas",
+    "tiempo": 45,
+    "porciones": 4,
+    "tags": [
+      "con-pollo"
+    ],
+    "ingredientes": [
+      "8 alitas o trozos de pollo",
+      "500 g de papa criolla",
+      "2 dientes de ajo",
+      "Sal, pimienta y páprika al gusto",
+      "Aceite para freír"
+    ],
+    "pasos": [
+      "Sazonar el pollo con ajo, sal, pimienta y páprika.",
+      "Freír el pollo en aceite caliente hasta dorar por completo.",
+      "Freír las papas criollas por separado hasta que queden crocantes.",
+      "Servir juntos en una canasta con salsas al gusto."
+    ]
+  },
+  {
+    "id": "pollo-en-salsa-de-champinones",
+    "nombre": "Pollo en Salsa de Champiñones",
+    "tiempo": 40,
+    "porciones": 4,
+    "tags": [
+      "con-pollo"
+    ],
+    "ingredientes": [
+      "4 pechugas de pollo",
+      "200 g de champiñones",
+      "1 taza de crema de leche",
+      "1 cebolla",
+      "2 dientes de ajo",
+      "Sal y pimienta al gusto"
+    ],
+    "pasos": [
+      "Sellar las pechugas en una sartén caliente y reservar.",
+      "En la misma sartén sofreír cebolla, ajo y champiñones.",
+      "Agregar la crema de leche y cocinar a fuego bajo hasta espesar.",
+      "Regresar el pollo a la sartén y cocinar 10 minutos más.",
+      "Servir con arroz o puré de papa."
+    ]
+  },
+  {
+    "id": "muslos-de-pollo-al-horno-con-papa",
+    "nombre": "Muslos de Pollo al Horno con Papa",
+    "tiempo": 60,
+    "porciones": 4,
+    "tags": [
+      "con-pollo",
+      "economico"
+    ],
+    "ingredientes": [
+      "8 muslos de pollo",
+      "4 papas medianas en trozos",
+      "3 dientes de ajo",
+      "Romero al gusto",
+      "Sal, pimienta y aceite de oliva"
+    ],
+    "pasos": [
+      "Precalentar el horno a 200°C.",
+      "Mezclar el pollo y la papa con ajo, romero, sal, pimienta y aceite.",
+      "Colocar todo en una bandeja para horno en una sola capa.",
+      "Hornear 40-45 minutos volteando a la mitad hasta dorar.",
+      "Servir caliente directamente de la bandeja."
+    ]
+  },
+  {
+    "id": "sudado-de-pollo-con-arroz",
+    "nombre": "Sudado de Pollo con Arroz",
+    "tiempo": 40,
+    "porciones": 4,
+    "tags": [
+      "con-pollo",
+      "economico"
+    ],
+    "ingredientes": [
+      "600 g de presas de pollo",
+      "1 taza de arroz",
+      "1 cebolla",
+      "2 tomates",
+      "2 dientes de ajo",
+      "Color y comino al gusto"
+    ],
+    "pasos": [
+      "Sofreír cebolla, tomate y ajo para el hogao.",
+      "Agregar el pollo y dorar ligeramente.",
+      "Añadir agua y cocinar tapado 20 minutos.",
+      "Aparte cocinar el arroz blanco y servir junto con el pollo y su salsa."
+    ]
+  },
+  {
+    "id": "pescado-frito-con-patacon",
+    "nombre": "Pescado Frito con Patacón",
+    "tiempo": 35,
+    "porciones": 4,
+    "tags": [
+      "con-pescado"
+    ],
+    "ingredientes": [
+      "4 pescados enteros pequeños (mojarra)",
+      "2 plátanos verdes",
+      "Jugo de limón",
+      "Sal y ajo al gusto",
+      "Aceite para freír"
+    ],
+    "pasos": [
+      "Marinar el pescado con limón, sal y ajo por 15 minutos.",
+      "Freír el pescado en aceite caliente hasta dorar por ambos lados.",
+      "Cortar el plátano en trozos, freír, aplastar y volver a freír para hacer los patacones.",
+      "Servir el pescado con los patacones y ensalada o arroz de coco."
+    ]
+  },
+  {
+    "id": "cazuela-de-mariscos",
+    "nombre": "Cazuela de Mariscos",
+    "tiempo": 45,
+    "porciones": 6,
+    "tags": [
+      "con-pescado"
+    ],
+    "ingredientes": [
+      "300 g de camarones",
+      "300 g de calamar",
+      "300 g de pescado en trozos",
+      "1 taza de leche de coco",
+      "1 cebolla",
+      "2 tomates",
+      "2 dientes de ajo",
+      "Cilantro al gusto"
+    ],
+    "pasos": [
+      "Sofreír cebolla, tomate y ajo hasta formar un hogao.",
+      "Agregar la leche de coco y llevar a hervor suave.",
+      "Incorporar los mariscos y el pescado, cocinando por tandas para que no se pasen de cocción.",
+      "Cocinar 10-12 minutos hasta que todo esté cocido.",
+      "Servir caliente con arroz blanco y cilantro fresco."
+    ]
+  },
+  {
+    "id": "arroz-de-coco-con-camarones",
+    "nombre": "Arroz de Coco con Camarones",
+    "tiempo": 45,
+    "porciones": 6,
+    "tags": [
+      "con-pescado"
+    ],
+    "ingredientes": [
+      "2 tazas de arroz",
+      "1 taza de leche de coco",
+      "1/2 taza de coco rallado tostado",
+      "300 g de camarones",
+      "1 cebolla",
+      "2 dientes de ajo",
+      "Pasas al gusto (opcional)"
+    ],
+    "pasos": [
+      "Tostar el coco rallado en una olla seca hasta dorar; reservar.",
+      "En la misma olla sofreír cebolla y ajo, agregar el arroz y sofreír 2 minutos.",
+      "Añadir la leche de coco y agua, cocinar tapado hasta que el arroz esté listo.",
+      "Aparte saltear los camarones con ajo hasta que estén cocidos.",
+      "Servir el arroz con el coco tostado y los camarones encima."
+    ]
+  },
+  {
+    "id": "viudo-de-pescado",
+    "nombre": "Viudo de Pescado",
+    "tiempo": 45,
+    "porciones": 4,
+    "tags": [
+      "con-pescado"
+    ],
+    "ingredientes": [
+      "4 postas de pescado (bocachico o mojarra)",
+      "2 plátanos verdes en trozos",
+      "1 yuca en trozos",
+      "Hojas de plátano (opcional)",
+      "1 cebolla",
+      "2 tomates",
+      "Cilantro al gusto"
+    ],
+    "pasos": [
+      "Preparar un hogao con cebolla, tomate y cilantro.",
+      "En una olla o envuelto en hoja de plátano, disponer capas de yuca, plátano y pescado.",
+      "Bañar con el hogao y un poco de agua.",
+      "Cocinar tapado a fuego medio 25-30 minutos hasta que todo esté tierno.",
+      "Servir directamente con el jugo de cocción."
+    ]
+  },
+  {
+    "id": "pescado-sudado",
+    "nombre": "Pescado Sudado",
+    "tiempo": 30,
+    "porciones": 4,
+    "tags": [
+      "con-pescado"
+    ],
+    "ingredientes": [
+      "4 postas de pescado",
+      "2 tomates",
+      "1 cebolla",
+      "2 dientes de ajo",
+      "Cilantro al gusto",
+      "1 limón"
+    ],
+    "pasos": [
+      "Sofreír cebolla, tomate y ajo hasta formar un guiso.",
+      "Agregar un poco de agua y llevar a hervor suave.",
+      "Incorporar el pescado sazonado con limón y cocinar 10-12 minutos tapado.",
+      "Servir con arroz blanco y cilantro fresco encima."
+    ]
+  },
+  {
+    "id": "arroz-endiablado-de-camarones",
+    "nombre": "Arroz Endiablado de Camarones",
+    "tiempo": 40,
+    "porciones": 5,
+    "tags": [
+      "con-pescado"
+    ],
+    "ingredientes": [
+      "2 tazas de arroz",
+      "300 g de camarones",
+      "2 cdas de salsa de tomate",
+      "1 cda de salsa picante",
+      "1 cebolla",
+      "2 dientes de ajo",
+      "Pimentón al gusto"
+    ],
+    "pasos": [
+      "Sofreír cebolla, ajo y pimentón en un poco de aceite.",
+      "Agregar el arroz y sofreír 2 minutos.",
+      "Añadir agua, salsa de tomate y salsa picante; cocinar tapado.",
+      "Cuando el arroz esté casi listo, incorporar los camarones y cocinar 5 minutos más.",
+      "Servir caliente."
+    ]
+  },
+  {
+    "id": "ceviche-de-camaron-colombiano",
+    "nombre": "Ceviche de Camarón Colombiano",
+    "tiempo": 30,
+    "porciones": 4,
+    "tags": [
+      "con-pescado"
+    ],
+    "ingredientes": [
+      "400 g de camarones cocidos",
+      "Jugo de 4 limones",
+      "1 cebolla morada picada",
+      "1 tomate picado",
+      "Cilantro al gusto",
+      "Salsa de tomate y mostaza al gusto"
+    ],
+    "pasos": [
+      "Cocinar brevemente los camarones en agua hirviendo y enfriar.",
+      "Mezclar los camarones con cebolla, tomate y cilantro.",
+      "Agregar el jugo de limón, salsa de tomate y mostaza al gusto.",
+      "Refrigerar 30 minutos antes de servir.",
+      "Servir frío con galletas de soda o patacones."
+    ]
+  },
+  {
+    "id": "bocachico-frito",
+    "nombre": "Bocachico Frito",
+    "tiempo": 25,
+    "porciones": 4,
+    "tags": [
+      "con-pescado",
+      "economico",
+      "rapido"
+    ],
+    "ingredientes": [
+      "4 bocachicos enteros",
+      "Jugo de limón",
+      "2 dientes de ajo",
+      "Sal al gusto",
+      "Harina de maíz o trigo para apanar (opcional)",
+      "Aceite para freír"
+    ],
+    "pasos": [
+      "Marinar el pescado con limón, ajo y sal durante 15 minutos.",
+      "Hacer cortes diagonales en el pescado para que se cocine parejo.",
+      "Pasar por harina si se desea más crocante y freír en aceite bien caliente.",
+      "Freír 6-7 minutos por lado hasta dorar completamente.",
+      "Servir con patacón, arroz de coco y ensalada."
+    ]
+  },
+  {
+    "id": "chicharron-colombiano",
+    "nombre": "Chicharrón Colombiano",
+    "tiempo": 40,
+    "porciones": 4,
+    "tags": [
+      "con-cerdo",
+      "economico"
+    ],
+    "ingredientes": [
+      "800 g de tocineta o papada de cerdo con cuero",
+      "Sal al gusto",
+      "Agua"
+    ],
+    "pasos": [
+      "Cortar el cerdo en tiras dejando el cuero.",
+      "Colocar en una sartén con un poco de agua y sal a fuego medio.",
+      "Cocinar dejando que el agua se evapore y la grasa se derrita lentamente.",
+      "Subir el fuego al final para que el cuero quede crocante, moviendo constantemente.",
+      "Escurrir el exceso de grasa y servir caliente."
+    ]
+  },
+  {
+    "id": "costillas-de-cerdo-bbq-criollas",
+    "nombre": "Costillas de Cerdo BBQ Criollas",
+    "tiempo": 180,
+    "porciones": 4,
+    "tags": [
+      "con-cerdo"
+    ],
+    "ingredientes": [
+      "1 kg de costillas de cerdo",
+      "1 taza de salsa BBQ o de tomate",
+      "2 dientes de ajo",
+      "1 cda de miel o panela raspada",
+      "Sal y pimienta al gusto"
+    ],
+    "pasos": [
+      "Marinar las costillas con ajo, sal, pimienta y un poco de la salsa por 2 horas.",
+      "Precalentar el horno a 180°C y hornear las costillas cubiertas con papel aluminio por 30 minutos.",
+      "Retirar el papel aluminio, bañar con el resto de la salsa mezclada con miel.",
+      "Hornear 15 minutos más destapado hasta caramelizar.",
+      "Servir con papa a la francesa o arroz."
+    ]
+  },
+  {
+    "id": "lomo-de-cerdo-en-salsa-de-champinones",
+    "nombre": "Lomo de Cerdo en Salsa de Champiñones",
+    "tiempo": 40,
+    "porciones": 5,
+    "tags": [
+      "con-cerdo"
+    ],
+    "ingredientes": [
+      "700 g de lomo de cerdo en medallones",
+      "200 g de champiñones",
+      "1 taza de crema de leche",
+      "1 cebolla",
+      "2 dientes de ajo",
+      "Sal y pimienta al gusto"
+    ],
+    "pasos": [
+      "Sellar los medallones de lomo en una sartén caliente; reservar.",
+      "En la misma sartén sofreír cebolla, ajo y champiñones.",
+      "Agregar la crema de leche y cocinar hasta espesar ligeramente.",
+      "Regresar el lomo a la sartén y cocinar 8-10 minutos más.",
+      "Servir con puré de papa o arroz."
+    ]
+  },
+  {
+    "id": "fritanga-mixta",
+    "nombre": "Fritanga Mixta",
+    "tiempo": 55,
+    "porciones": 6,
+    "tags": [
+      "con-cerdo"
+    ],
+    "ingredientes": [
+      "300 g de chorizo",
+      "300 g de morcilla",
+      "300 g de chunchullo",
+      "300 g de carne de cerdo",
+      "2 plátanos maduros",
+      "Papa criolla frita",
+      "Arepas pequeñas"
+    ],
+    "pasos": [
+      "Cocinar previamente el chunchullo hasta que esté tierno y luego freírlo.",
+      "Asar o freír el chorizo, la morcilla y la carne de cerdo por separado.",
+      "Freír el plátano maduro y la papa criolla.",
+      "Disponer todo en una bandeja grande para compartir.",
+      "Servir con ají picante y arepas."
+    ]
+  },
+  {
+    "id": "carne-de-cerdo-guisada-con-arroz",
+    "nombre": "Carne de Cerdo Guisada con Arroz",
+    "tiempo": 50,
+    "porciones": 4,
+    "tags": [
+      "con-cerdo"
+    ],
+    "ingredientes": [
+      "600 g de carne de cerdo en trozos",
+      "1 cebolla",
+      "2 tomates",
+      "2 dientes de ajo",
+      "1 pimentón",
+      "Comino al gusto"
+    ],
+    "pasos": [
+      "Sofreír cebolla, tomate, pimentón y ajo hasta formar un guiso.",
+      "Agregar la carne de cerdo y dorar ligeramente.",
+      "Añadir un poco de agua y cocinar tapado 25-30 minutos hasta que esté tierna.",
+      "Servir con arroz blanco y ensalada."
+    ]
+  },
+  {
+    "id": "frijoles-antioquenos",
+    "nombre": "Fríjoles Antioqueños",
+    "tiempo": 585,
+    "porciones": 8,
+    "tags": [
+      "con-cerdo",
+      "economico"
+    ],
+    "ingredientes": [
+      "500 g de fríjol cargamanto remojado",
+      "200 g de tocino o costilla de cerdo",
+      "1 plátano verde en trozos",
+      "1 cebolla",
+      "2 tomates",
+      "2 dientes de ajo",
+      "Cilantro al gusto"
+    ],
+    "pasos": [
+      "Cocinar el fríjol remojado con el tocino en abundante agua hasta ablandar (1 hora aprox).",
+      "Agregar el plátano verde en trozos y cocinar 20 minutos más.",
+      "Aparte preparar un hogao con cebolla, tomate y ajo, e incorporarlo a los fríjoles.",
+      "Cocinar 15-20 minutos más hasta que espese a gusto.",
+      "Servir con arroz, chicharrón y aguacate."
+    ]
+  },
+  {
+    "id": "lentejas-guisadas-con-chorizo",
+    "nombre": "Lentejas Guisadas con Chorizo",
+    "tiempo": 45,
+    "porciones": 6,
+    "tags": [
+      "con-cerdo",
+      "economico"
+    ],
+    "ingredientes": [
+      "2 tazas de lentejas",
+      "2 chorizos en rodajas",
+      "1 cebolla",
+      "2 tomates",
+      "2 dientes de ajo",
+      "Comino al gusto"
+    ],
+    "pasos": [
+      "Sofreír el chorizo hasta dorar y reservar la grasa liberada.",
+      "En esa misma grasa sofreír cebolla, tomate y ajo.",
+      "Agregar las lentejas lavadas y agua suficiente.",
+      "Cocinar 25-30 minutos hasta que las lentejas estén blandas, agregando el chorizo al final.",
+      "Servir con arroz blanco."
+    ]
+  },
+  {
+    "id": "garbanzos-guisados",
+    "nombre": "Garbanzos Guisados",
+    "tiempo": 550,
+    "porciones": 6,
+    "tags": [
+      "vegetariano",
+      "economico"
+    ],
+    "ingredientes": [
+      "2 tazas de garbanzos remojados",
+      "1 cebolla",
+      "2 tomates",
+      "2 dientes de ajo",
+      "1 zanahoria picada",
+      "Comino al gusto"
+    ],
+    "pasos": [
+      "Cocinar los garbanzos remojados en agua hasta que estén blandos (45-50 min).",
+      "Sofreír cebolla, tomate y ajo para hacer un guiso.",
+      "Incorporar el guiso y la zanahoria a los garbanzos.",
+      "Cocinar 15 minutos más hasta integrar los sabores.",
+      "Servir con arroz blanco."
+    ]
+  },
+  {
+    "id": "frijoles-con-garra-pata-de-res",
+    "nombre": "Fríjoles con Garra (Pata de Res)",
+    "tiempo": 615,
+    "porciones": 8,
+    "tags": [
+      "con-carne"
+    ],
+    "ingredientes": [
+      "500 g de fríjol cargamanto remojado",
+      "1 garra o pata de res",
+      "1 plátano verde",
+      "1 cebolla",
+      "2 tomates",
+      "2 dientes de ajo",
+      "Cilantro al gusto"
+    ],
+    "pasos": [
+      "Cocinar la garra de res en agua hasta que esté muy blanda (1 hora aprox).",
+      "Agregar el fríjol remojado y cocinar 1 hora más hasta que ablande.",
+      "Añadir el plátano en trozos y un hogao de cebolla, tomate y ajo.",
+      "Cocinar 20 minutos más hasta espesar.",
+      "Servir con arroz y aguacate."
+    ]
+  },
+  {
+    "id": "arveja-verde-guisada-con-costilla",
+    "nombre": "Arveja Verde Guisada con Costilla",
+    "tiempo": 50,
+    "porciones": 5,
+    "tags": [
+      "con-carne",
+      "con-cerdo",
+      "economico"
+    ],
+    "ingredientes": [
+      "2 tazas de arveja verde",
+      "300 g de costilla de res o cerdo",
+      "1 cebolla",
+      "2 tomates",
+      "2 dientes de ajo",
+      "Comino al gusto"
+    ],
+    "pasos": [
+      "Cocinar la costilla en agua hasta que esté tierna.",
+      "Agregar la arveja y cocinar 20 minutos.",
+      "Sofreír cebolla, tomate y ajo, e incorporar a la olla.",
+      "Cocinar 10 minutos más y ajustar sal.",
+      "Servir con arroz blanco."
+    ]
+  },
+  {
+    "id": "habichuelas-guisadas-con-papa",
+    "nombre": "Habichuelas Guisadas con Papa",
+    "tiempo": 30,
+    "porciones": 4,
+    "tags": [
+      "vegetariano",
+      "economico",
+      "saludable"
+    ],
+    "ingredientes": [
+      "400 g de habichuelas",
+      "2 papas medianas",
+      "1 cebolla",
+      "1 tomate",
+      "2 dientes de ajo",
+      "Comino al gusto"
+    ],
+    "pasos": [
+      "Sofreír cebolla, tomate y ajo hasta formar un hogao.",
+      "Agregar las habichuelas troceadas y un poco de agua.",
+      "Incorporar la papa en trozos y cocinar tapado 15-18 minutos.",
+      "Servir como acompañamiento de carnes."
+    ]
+  },
+  {
+    "id": "frijol-cargamanto-con-platano",
+    "nombre": "Fríjol Cargamanto con Plátano",
+    "tiempo": 575,
+    "porciones": 6,
+    "tags": [
+      "vegetariano",
+      "economico"
+    ],
+    "ingredientes": [
+      "400 g de fríjol cargamanto remojado",
+      "1 plátano maduro en trozos",
+      "1 cebolla",
+      "2 tomates",
+      "2 dientes de ajo",
+      "Cilantro al gusto"
+    ],
+    "pasos": [
+      "Cocinar el fríjol remojado en abundante agua hasta que esté blando.",
+      "Agregar el plátano maduro en trozos y cocinar 15 minutos más.",
+      "Sofreír cebolla, tomate y ajo, incorporar a la olla.",
+      "Cocinar 15 minutos más hasta espesar y ajustar sal.",
+      "Servir con arroz blanco."
+    ]
+  },
+  {
+    "id": "arroz-con-lentejas-y-verduras",
+    "nombre": "Arroz con Lentejas y Verduras",
+    "tiempo": 40,
+    "porciones": 5,
+    "tags": [
+      "vegetariano",
+      "economico"
+    ],
+    "ingredientes": [
+      "1 taza de arroz",
+      "1 taza de lentejas",
+      "1 zanahoria picada",
+      "1 cebolla",
+      "2 dientes de ajo",
+      "Comino al gusto"
+    ],
+    "pasos": [
+      "Cocinar las lentejas por separado hasta que estén casi blandas.",
+      "Sofreír cebolla, ajo y zanahoria; agregar el arroz y sofreír 2 minutos.",
+      "Añadir las lentejas con su agua de cocción y completar con agua si hace falta.",
+      "Cocinar tapado hasta que el arroz esté listo.",
+      "Servir como plato único vegetariano."
+    ]
+  },
+  {
+    "id": "arroz-blanco-colombiano",
+    "nombre": "Arroz Blanco Colombiano",
+    "tiempo": 25,
+    "porciones": 6,
+    "tags": [
+      "vegetariano",
+      "economico",
+      "rapido"
+    ],
+    "ingredientes": [
+      "2 tazas de arroz",
+      "4 tazas de agua",
+      "Sal al gusto",
+      "1 cda de aceite (opcional)"
+    ],
+    "pasos": [
+      "Lavar el arroz si se desea menos almidón.",
+      "Llevar el agua a hervor con sal y un poco de aceite.",
+      "Agregar el arroz, bajar el fuego y tapar.",
+      "Cocinar 18-20 minutos sin destapar hasta que absorba toda el agua.",
+      "Dejar reposar 5 minutos y esponjar con un tenedor."
+    ]
+  },
+  {
+    "id": "arroz-atollado",
+    "nombre": "Arroz Atollado",
+    "tiempo": 50,
+    "porciones": 6,
+    "tags": [
+      "con-cerdo"
+    ],
+    "ingredientes": [
+      "2 tazas de arroz",
+      "300 g de carne de cerdo",
+      "2 papas criollas",
+      "1 cebolla",
+      "2 tomates",
+      "2 dientes de ajo",
+      "Color y comino al gusto"
+    ],
+    "pasos": [
+      "Sofreír cebolla, tomate y ajo, agregar la carne de cerdo y dorar.",
+      "Añadir agua y cocinar hasta que la carne esté casi tierna.",
+      "Incorporar el arroz y la papa criolla; cocinar tapado revolviendo ocasionalmente.",
+      "El punto final debe quedar más húmedo que un arroz normal, como un risotto.",
+      "Servir caliente."
+    ]
+  },
+  {
+    "id": "arroz-con-chorizo",
+    "nombre": "Arroz con Chorizo",
+    "tiempo": 35,
+    "porciones": 4,
+    "tags": [
+      "con-cerdo",
+      "economico"
+    ],
+    "ingredientes": [
+      "2 tazas de arroz",
+      "2 chorizos en rodajas",
+      "1 cebolla",
+      "1 pimentón",
+      "2 dientes de ajo",
+      "Color al gusto"
+    ],
+    "pasos": [
+      "Dorar el chorizo en una olla y reservar la grasa.",
+      "Sofreír cebolla, pimentón y ajo en esa grasa.",
+      "Agregar el arroz y sofreír 2 minutos, luego añadir agua.",
+      "Incorporar el chorizo y cocinar tapado hasta que el arroz esté listo.",
+      "Servir caliente con ensalada."
+    ]
+  },
+  {
+    "id": "arroz-con-verduras-salteadas",
+    "nombre": "Arroz con Verduras Salteadas",
+    "tiempo": 30,
+    "porciones": 4,
+    "tags": [
+      "vegetariano",
+      "economico"
+    ],
+    "ingredientes": [
+      "2 tazas de arroz cocido",
+      "1 zanahoria",
+      "1 taza de arveja",
+      "1/2 pimentón",
+      "1 cebolla",
+      "2 dientes de ajo",
+      "Sillao o salsa de soya (opcional)"
+    ],
+    "pasos": [
+      "Saltear cebolla, ajo, zanahoria y pimentón en un poco de aceite.",
+      "Agregar la arveja y cocinar 5 minutos.",
+      "Incorporar el arroz cocido y mezclar bien.",
+      "Sazonar con sal o un chorrito de salsa de soya y servir caliente."
+    ]
+  },
+  {
+    "id": "arroz-paisa",
+    "nombre": "Arroz Paisa",
+    "tiempo": 45,
+    "porciones": 6,
+    "tags": [
+      "con-cerdo"
+    ],
+    "ingredientes": [
+      "2 tazas de arroz",
+      "200 g de tocino picado",
+      "1 taza de fríjoles cocidos",
+      "1 cebolla",
+      "2 tomates",
+      "Color al gusto"
+    ],
+    "pasos": [
+      "Dorar el tocino en una olla hasta que suelte su grasa.",
+      "Sofreír cebolla y tomate en esa grasa.",
+      "Agregar el arroz y sofreír 2 minutos, luego añadir agua.",
+      "Incorporar los fríjoles cocidos y cocinar tapado hasta que el arroz esté listo.",
+      "Servir caliente como plato único."
+    ]
+  },
+  {
+    "id": "calentado-paisa",
+    "nombre": "Calentado Paisa",
+    "tiempo": 25,
+    "porciones": 2,
+    "tags": [
+      "con-cerdo",
+      "desayuno",
+      "economico",
+      "rapido"
+    ],
+    "ingredientes": [
+      "1 taza de arroz cocido (del día anterior)",
+      "1 taza de fríjoles cocidos",
+      "2 huevos",
+      "1 arepa",
+      "1 chorizo o longaniza (opcional)",
+      "Cebolla al gusto"
+    ],
+    "pasos": [
+      "Calentar en una sartén el arroz junto con los fríjoles hasta que se mezclen y calienten bien.",
+      "Freír los huevos y el chorizo por separado.",
+      "Calentar la arepa en la misma sartén o en un tostador.",
+      "Servir todo junto: calentado, huevo, chorizo y arepa."
+    ]
+  },
+  {
+    "id": "huevos-pericos",
+    "nombre": "Huevos Pericos",
+    "tiempo": 13,
+    "porciones": 2,
+    "tags": [
+      "vegetariano",
+      "desayuno",
+      "economico",
+      "rapido"
+    ],
+    "ingredientes": [
+      "4 huevos",
+      "1 tomate picado",
+      "1 cebolla larga picada",
+      "Sal al gusto",
+      "1 cda de aceite o mantequilla"
+    ],
+    "pasos": [
+      "Sofreír la cebolla y el tomate en un poco de aceite hasta ablandar.",
+      "Batir los huevos ligeramente y agregarlos a la sartén.",
+      "Revolver constantemente a fuego medio-bajo hasta que cuajen.",
+      "Servir con arepa o pan y chocolate caliente."
+    ]
+  },
+  {
+    "id": "changua",
+    "nombre": "Changua",
+    "tiempo": 15,
+    "porciones": 2,
+    "tags": [
+      "vegetariano",
+      "desayuno",
+      "economico",
+      "rapido"
+    ],
+    "ingredientes": [
+      "2 tazas de leche",
+      "1 taza de agua",
+      "2 huevos",
+      "1 tallo de cebolla larga",
+      "Cilantro al gusto",
+      "Pan duro (calado) para acompañar"
+    ],
+    "pasos": [
+      "Calentar el agua con la leche y la cebolla larga picada.",
+      "Cuando esté hirviendo, agregar los huevos con cuidado sin batir del todo (pueden quedar enteros o revueltos).",
+      "Cocinar 3-4 minutos hasta que los huevos cuajen.",
+      "Servir con cilantro picado y pan duro remojado dentro."
+    ]
+  },
+  {
+    "id": "arepa-con-huevo",
+    "nombre": "Arepa con Huevo",
+    "tiempo": 35,
+    "porciones": 4,
+    "tags": [
+      "vegetariano",
+      "desayuno",
+      "economico"
+    ],
+    "ingredientes": [
+      "2 tazas de harina de maíz precocida",
+      "2 tazas de agua tibia",
+      "Sal al gusto",
+      "4 huevos",
+      "Aceite para freír"
+    ],
+    "pasos": [
+      "Mezclar la harina de maíz con agua y sal hasta formar una masa suave.",
+      "Formar discos de masa y freírlos parcialmente en aceite caliente hasta que floten e inflen un poco.",
+      "Retirar, hacer un corte lateral y rellenar con huevo crudo batido o entero.",
+      "Sellar bien el borde y volver a freír hasta que el huevo cuaje y la arepa dore.",
+      "Servir caliente."
+    ]
+  },
+  {
+    "id": "tamal-tolimense",
+    "nombre": "Tamal Tolimense",
+    "tiempo": 165,
+    "porciones": 8,
+    "tags": [
+      "con-pollo",
+      "con-cerdo",
+      "desayuno"
+    ],
+    "ingredientes": [
+      "1 kg de masa de maíz para tamal",
+      "500 g de carne de cerdo",
+      "300 g de pollo",
+      "2 papas medianas",
+      "Arveja al gusto",
+      "Hojas de plátano",
+      "Color y comino al gusto"
+    ],
+    "pasos": [
+      "Sazonar la masa de maíz con color, sal y comino.",
+      "Sobre cada hoja de plátano colocar una porción de masa, papa, arveja, pollo y cerdo.",
+      "Envolver bien las hojas formando un paquete cerrado y amarrar con cuerda.",
+      "Cocinar los tamales en agua hirviendo por 1 hora 30 min a 2 horas.",
+      "Servir caliente acompañado de chocolate o pan."
+    ]
+  },
+  {
+    "id": "envuelto-de-mazorca-envuelto-de-choclo",
+    "nombre": "Envuelto de Mazorca (Envuelto de Choclo)",
+    "tiempo": 60,
+    "porciones": 8,
+    "tags": [
+      "vegetariano",
+      "desayuno",
+      "economico"
+    ],
+    "ingredientes": [
+      "6 mazorcas tiernas desgranadas",
+      "2 cdas de mantequilla",
+      "2 cdas de azúcar",
+      "Hojas de mazorca para envolver",
+      "Sal al gusto"
+    ],
+    "pasos": [
+      "Moler los granos de mazorca hasta obtener una masa espesa.",
+      "Mezclar con mantequilla, azúcar y sal al gusto.",
+      "Colocar porciones de la mezcla sobre hojas de mazorca y envolver bien.",
+      "Cocinar al vapor durante 35-40 minutos.",
+      "Servir tibio con chocolate caliente."
+    ]
+  },
+  {
+    "id": "bunuelos-colombianos",
+    "nombre": "Buñuelos Colombianos",
+    "tiempo": 40,
+    "porciones": 10,
+    "tags": [
+      "vegetariano",
+      "desayuno"
+    ],
+    "ingredientes": [
+      "2 tazas de queso costeño rallado",
+      "1 taza de almidón de yuca",
+      "1/2 taza de harina de maíz",
+      "2 huevos",
+      "1 cdta de polvo de hornear",
+      "Aceite para freír"
+    ],
+    "pasos": [
+      "Mezclar el queso rallado con el almidón, la harina, el polvo de hornear y los huevos hasta formar una masa.",
+      "Amasar hasta que quede homogénea; si está muy seca agregar un poco de leche.",
+      "Formar bolitas y freír en aceite bien caliente a fuego medio para que se cocinen por dentro.",
+      "Voltear constantemente hasta que doren parejo por fuera.",
+      "Escurrir y servir tibios."
+    ]
+  },
+  {
+    "id": "pandebono",
+    "nombre": "Pandebono",
+    "tiempo": 40,
+    "porciones": 12,
+    "tags": [
+      "vegetariano",
+      "desayuno",
+      "economico"
+    ],
+    "ingredientes": [
+      "2 tazas de queso costeño rallado",
+      "1 taza de almidón de yuca agrio",
+      "1/2 taza de harina de maíz",
+      "2 huevos",
+      "1 cdta de polvo de hornear"
+    ],
+    "pasos": [
+      "Mezclar todos los ingredientes hasta formar una masa suave y no pegajosa.",
+      "Formar rosquitas o bolitas con la masa.",
+      "Colocar en una bandeja para horno precalentado a 200°C.",
+      "Hornear 15-18 minutos hasta que doren por fuera.",
+      "Servir tibios, idealmente con chocolate."
+    ]
+  },
+  {
+    "id": "almojabana",
+    "nombre": "Almojábana",
+    "tiempo": 35,
+    "porciones": 10,
+    "tags": [
+      "vegetariano",
+      "desayuno",
+      "economico"
+    ],
+    "ingredientes": [
+      "2 tazas de cuajada o queso campesino desmenuzado",
+      "1 taza de harina de maíz",
+      "1/2 taza de harina de trigo",
+      "2 huevos",
+      "1 cda de azúcar",
+      "1 cdta de polvo de hornear"
+    ],
+    "pasos": [
+      "Mezclar la cuajada desmenuzada con las harinas, azúcar y polvo de hornear.",
+      "Agregar los huevos y amasar hasta obtener una masa uniforme.",
+      "Formar bolitas y colocarlas en una bandeja para horno engrasada.",
+      "Hornear a 200°C por 15-18 minutos hasta dorar.",
+      "Servir tibias con chocolate o café."
+    ]
+  },
+  {
+    "id": "caldo-de-costilla-para-el-guayabo",
+    "nombre": "Caldo de Costilla para el Guayabo",
+    "tiempo": 50,
+    "porciones": 4,
+    "tags": [
+      "con-carne",
+      "desayuno",
+      "economico"
+    ],
+    "ingredientes": [
+      "500 g de costilla de res",
+      "2 papas picadas",
+      "1 cebolla larga",
+      "2 dientes de ajo",
+      "Cilantro al gusto"
+    ],
+    "pasos": [
+      "Cocinar la costilla con cebolla y ajo hasta que esté tierna.",
+      "Agregar la papa y cocinar hasta que espese el caldo.",
+      "Ajustar sal y agregar cilantro fresco al servir.",
+      "Tomar bien caliente, idealmente en la mañana."
+    ]
+  },
+  {
+    "id": "arepa-de-choclo",
+    "nombre": "Arepa de Choclo",
+    "tiempo": 25,
+    "porciones": 6,
+    "tags": [
+      "vegetariano",
+      "desayuno",
+      "economico",
+      "rapido"
+    ],
+    "ingredientes": [
+      "4 mazorcas tiernas desgranadas",
+      "1/2 taza de harina de maíz",
+      "2 cdas de azúcar",
+      "1 cda de mantequilla",
+      "Queso campesino al gusto"
+    ],
+    "pasos": [
+      "Moler los granos de mazorca junto con la harina hasta obtener una masa.",
+      "Mezclar con azúcar, mantequilla y un poco de sal.",
+      "Formar discos y colocar un trozo de queso en el centro si se desea.",
+      "Asar en plancha o sartén a fuego medio 4-5 minutos por lado hasta dorar.",
+      "Servir caliente con queso o mantequilla."
+    ]
+  },
+  {
+    "id": "arepa-boyacense",
+    "nombre": "Arepa Boyacense",
+    "tiempo": 30,
+    "porciones": 6,
+    "tags": [
+      "vegetariano",
+      "desayuno",
+      "economico"
+    ],
+    "ingredientes": [
+      "2 tazas de harina de maíz blanco",
+      "1 taza de agua tibia",
+      "2 cdas de panela raspada o azúcar",
+      "1 cda de mantequilla",
+      "Sal al gusto"
+    ],
+    "pasos": [
+      "Mezclar la harina de maíz con agua, panela, mantequilla y sal hasta formar una masa suave.",
+      "Dejar reposar la masa 10 minutos.",
+      "Formar discos gruesos y asarlos en plancha o budare a fuego medio-bajo.",
+      "Cocinar 6-7 minutos por lado hasta que doren y se cocinen por dentro.",
+      "Servir con queso o mantequilla."
+    ]
+  },
+  {
+    "id": "arepa-santandereana",
+    "nombre": "Arepa Santandereana",
+    "tiempo": 25,
+    "porciones": 6,
+    "tags": [
+      "con-cerdo",
+      "desayuno",
+      "economico",
+      "rapido"
+    ],
+    "ingredientes": [
+      "2 tazas de harina de maíz",
+      "1 taza de chicharrón molido",
+      "1 taza de agua tibia",
+      "Sal al gusto"
+    ],
+    "pasos": [
+      "Mezclar la harina de maíz con el chicharrón molido, agua y sal.",
+      "Amasar hasta lograr una masa uniforme.",
+      "Formar discos y asarlos en plancha o budare caliente.",
+      "Cocinar 5-6 minutos por lado hasta dorar.",
+      "Servir caliente, típicamente en el desayuno."
+    ]
+  },
+  {
+    "id": "empanadas-colombianas",
+    "nombre": "Empanadas Colombianas",
+    "tiempo": 60,
+    "porciones": 12,
+    "tags": [
+      "con-pollo",
+      "con-carne"
+    ],
+    "ingredientes": [
+      "2 tazas de harina de maíz amarillo precocida",
+      "2 papas cocidas y picadas",
+      "300 g de carne molida o pollo desmechado",
+      "1 cebolla",
+      "2 dientes de ajo",
+      "Color y comino al gusto",
+      "Aceite para freír"
+    ],
+    "pasos": [
+      "Preparar el relleno sofriendo cebolla y ajo, agregando la carne y la papa picada; sazonar con color y comino.",
+      "Mezclar la harina de maíz con agua y sal para formar la masa.",
+      "Formar discos delgados, rellenar con la mezcla y doblar en forma de media luna sellando bien el borde.",
+      "Freír en aceite bien caliente hasta que doren y queden crocantes.",
+      "Servir con ají y limón."
+    ]
+  },
+  {
+    "id": "patacones-con-hogao",
+    "nombre": "Patacones con Hogao",
+    "tiempo": 25,
+    "porciones": 4,
+    "tags": [
+      "vegetariano",
+      "economico",
+      "rapido"
+    ],
+    "ingredientes": [
+      "2 plátanos verdes",
+      "Aceite para freír",
+      "1 tomate",
+      "1 cebolla",
+      "Sal al gusto"
+    ],
+    "pasos": [
+      "Cortar el plátano en trozos y freír ligeramente en aceite caliente.",
+      "Retirar, aplastar cada trozo hasta aplanarlo y volver a freír hasta dorar y quedar crocante.",
+      "Preparar un hogao rápido sofriendo tomate y cebolla picados.",
+      "Servir los patacones con el hogao por encima o aparte."
+    ]
+  },
+  {
+    "id": "torta-de-choclo",
+    "nombre": "Torta de Choclo",
+    "tiempo": 50,
+    "porciones": 8,
+    "tags": [
+      "vegetariano",
+      "economico"
+    ],
+    "ingredientes": [
+      "6 mazorcas tiernas desgranadas",
+      "2 huevos",
+      "2 cdas de mantequilla derretida",
+      "1/2 taza de queso rallado",
+      "2 cdas de azúcar",
+      "1 cdta de polvo de hornear"
+    ],
+    "pasos": [
+      "Moler o licuar los granos de mazorca.",
+      "Mezclar con huevos, mantequilla, azúcar y polvo de hornear.",
+      "Verter en un molde engrasado y espolvorear el queso rallado por encima.",
+      "Hornear a 180°C durante 30-35 minutos hasta que dore y cuaje.",
+      "Dejar enfriar un poco antes de cortar en porciones."
+    ]
+  },
+  {
+    "id": "arepa-rellena-de-carne-y-queso",
+    "nombre": "Arepa Rellena de Carne y Queso",
+    "tiempo": 30,
+    "porciones": 4,
+    "tags": [
+      "con-carne",
+      "desayuno"
+    ],
+    "ingredientes": [
+      "2 tazas de harina de maíz precocida",
+      "2 tazas de agua tibia",
+      "200 g de carne desmechada",
+      "1 taza de queso mozzarella rallado",
+      "Sal al gusto"
+    ],
+    "pasos": [
+      "Preparar la masa de arepa mezclando harina, agua y sal.",
+      "Formar discos y asar en plancha hasta que doren por fuera pero queden algo blandos.",
+      "Abrir cada arepa por la mitad y rellenar con carne desmechada y queso.",
+      "Cerrar y calentar de nuevo en la plancha hasta que el queso se derrita.",
+      "Servir caliente."
+    ]
+  },
+  {
+    "id": "ensalada-de-aguacate-y-tomate",
+    "nombre": "Ensalada de Aguacate y Tomate",
+    "tiempo": 10,
+    "porciones": 4,
+    "tags": [
+      "vegetariano",
+      "economico",
+      "rapido"
+    ],
+    "ingredientes": [
+      "2 aguacates",
+      "2 tomates",
+      "1/2 cebolla morada",
+      "Jugo de 1 limón",
+      "Sal y cilantro al gusto"
+    ],
+    "pasos": [
+      "Cortar el aguacate y el tomate en cubos.",
+      "Picar finamente la cebolla morada.",
+      "Mezclar todo con jugo de limón, sal y cilantro.",
+      "Servir de inmediato como acompañamiento."
+    ]
+  },
+  {
+    "id": "ensalada-rusa-colombiana",
+    "nombre": "Ensalada Rusa Colombiana",
+    "tiempo": 35,
+    "porciones": 6,
+    "tags": [
+      "vegetariano",
+      "economico"
+    ],
+    "ingredientes": [
+      "3 papas medianas",
+      "2 zanahorias",
+      "1 taza de arveja",
+      "2 huevos cocidos",
+      "1 taza de mayonesa",
+      "Sal al gusto"
+    ],
+    "pasos": [
+      "Cocinar la papa y la zanahoria en cubos hasta que estén blandas; cocinar la arveja aparte.",
+      "Cocinar los huevos, dejar enfriar y picar.",
+      "Mezclar todos los vegetales cocidos con la mayonesa y sal.",
+      "Refrigerar al menos 30 minutos antes de servir."
+    ]
+  },
+  {
+    "id": "papa-salada-colombiana",
+    "nombre": "Papa Salada Colombiana",
+    "tiempo": 30,
+    "porciones": 4,
+    "tags": [
+      "vegetariano",
+      "economico"
+    ],
+    "ingredientes": [
+      "4 papas medianas",
+      "1 cebolla larga picada",
+      "1 tomate picado",
+      "Cilantro al gusto",
+      "Sal y aceite al gusto"
+    ],
+    "pasos": [
+      "Cocinar las papas con cáscara hasta que estén tiernas; pelar y cortar en cubos.",
+      "Mezclar con cebolla, tomate y cilantro picados.",
+      "Aliñar con un poco de aceite y sal al gusto.",
+      "Servir tibia o fría como acompañamiento."
+    ]
+  },
+  {
+    "id": "yuca-frita",
+    "nombre": "Yuca Frita",
+    "tiempo": 30,
+    "porciones": 4,
+    "tags": [
+      "vegetariano",
+      "economico"
+    ],
+    "ingredientes": [
+      "600 g de yuca",
+      "Aceite para freír",
+      "Sal al gusto"
+    ],
+    "pasos": [
+      "Cocinar la yuca en agua con sal hasta que esté blanda pero firme.",
+      "Cortar en bastones una vez tibia.",
+      "Freír en aceite bien caliente hasta que doren y queden crocantes por fuera.",
+      "Escurrir el exceso de aceite y servir con suero costeño o ají."
+    ]
+  },
+  {
+    "id": "ensalada-de-repollo-coleslaw-criollo",
+    "nombre": "Ensalada de Repollo (Coleslaw Criollo)",
+    "tiempo": 10,
+    "porciones": 6,
+    "tags": [
+      "vegetariano",
+      "economico",
+      "rapido"
+    ],
+    "ingredientes": [
+      "1/2 repollo picado finamente",
+      "1 zanahoria rallada",
+      "1/2 taza de mayonesa",
+      "Jugo de 1 limón",
+      "Sal al gusto"
+    ],
+    "pasos": [
+      "Picar el repollo finamente y rallar la zanahoria.",
+      "Mezclar con mayonesa, jugo de limón y sal.",
+      "Refrigerar 15 minutos antes de servir para que se integren los sabores."
+    ]
+  },
+  {
+    "id": "patacon-pisao-con-queso",
+    "nombre": "Patacón Pisao con Queso",
+    "tiempo": 25,
+    "porciones": 4,
+    "tags": [
+      "vegetariano",
+      "economico",
+      "rapido"
+    ],
+    "ingredientes": [
+      "2 plátanos verdes grandes",
+      "Aceite para freír",
+      "1 taza de queso costeño rallado",
+      "Sal al gusto"
+    ],
+    "pasos": [
+      "Cortar el plátano en rodajas gruesas y freír ligeramente.",
+      "Aplastar cada rodaja hasta formar un disco grande y delgado.",
+      "Volver a freír hasta dorar y quedar crocante.",
+      "Servir espolvoreado con queso rallado por encima."
+    ]
+  },
+  {
+    "id": "arroz-con-leche",
+    "nombre": "Arroz con Leche",
+    "tiempo": 35,
+    "porciones": 6,
+    "tags": [
+      "vegetariano",
+      "postre",
+      "economico"
+    ],
+    "ingredientes": [
+      "1 taza de arroz",
+      "4 tazas de leche",
+      "1 astilla de canela",
+      "1/2 taza de azúcar",
+      "Clavos de olor al gusto",
+      "Pasas (opcional)"
+    ],
+    "pasos": [
+      "Cocinar el arroz en agua con la canela hasta que esté casi blando.",
+      "Agregar la leche y el azúcar, cocinar a fuego bajo revolviendo con frecuencia.",
+      "Cocinar 20-25 minutos hasta que espese a la consistencia deseada.",
+      "Agregar pasas si se desea y servir tibio o frío."
+    ]
+  },
+  {
+    "id": "cuajada-con-melao",
+    "nombre": "Cuajada con Melao",
+    "tiempo": 15,
+    "porciones": 4,
+    "tags": [
+      "vegetariano",
+      "postre",
+      "economico",
+      "rapido"
+    ],
+    "ingredientes": [
+      "500 g de cuajada fresca",
+      "200 g de panela",
+      "1 taza de agua"
+    ],
+    "pasos": [
+      "Derretir la panela en agua a fuego medio hasta formar un melao espeso.",
+      "Cortar la cuajada en trozos medianos.",
+      "Servir la cuajada bañada con el melao tibio."
+    ]
+  },
+  {
+    "id": "torta-de-platano-maduro",
+    "nombre": "Torta de Plátano Maduro",
+    "tiempo": 55,
+    "porciones": 8,
+    "tags": [
+      "vegetariano",
+      "postre",
+      "economico"
+    ],
+    "ingredientes": [
+      "3 plátanos maduros",
+      "2 huevos",
+      "1/2 taza de harina de trigo",
+      "1/2 taza de queso rallado",
+      "1 cda de mantequilla",
+      "1 cdta de polvo de hornear"
+    ],
+    "pasos": [
+      "Machacar los plátanos maduros hasta obtener un puré.",
+      "Mezclar con huevos, harina, queso, mantequilla derretida y polvo de hornear.",
+      "Verter en un molde engrasado.",
+      "Hornear a 180°C durante 35-40 minutos hasta dorar y cuajar.",
+      "Dejar enfriar antes de desmoldar y cortar."
+    ]
+  },
+  {
+    "id": "colada-de-avena",
+    "nombre": "Colada de Avena",
+    "tiempo": 20,
+    "porciones": 4,
+    "tags": [
+      "vegetariano",
+      "postre",
+      "economico",
+      "rapido"
+    ],
+    "ingredientes": [
+      "1 taza de avena en hojuelas",
+      "4 tazas de leche o agua",
+      "1 astilla de canela",
+      "Azúcar o panela al gusto"
+    ],
+    "pasos": [
+      "Calentar la leche o el agua con la canela.",
+      "Agregar la avena y cocinar a fuego bajo revolviendo con frecuencia.",
+      "Cocinar 10-12 minutos hasta que espese ligeramente.",
+      "Endulzar al gusto y servir tibia."
+    ]
+  },
+  {
+    "id": "torta-de-zanahoria-casera",
+    "nombre": "Torta de Zanahoria Casera",
+    "tiempo": 65,
+    "porciones": 10,
+    "tags": [
+      "vegetariano",
+      "postre"
+    ],
+    "ingredientes": [
+      "2 tazas de zanahoria rallada",
+      "2 tazas de harina de trigo",
+      "1 taza de azúcar",
+      "3 huevos",
+      "1 taza de aceite",
+      "1 cdta de polvo de hornear",
+      "Canela al gusto"
+    ],
+    "pasos": [
+      "Batir los huevos con el azúcar y el aceite hasta integrar.",
+      "Agregar la zanahoria rallada y mezclar.",
+      "Incorporar la harina, el polvo de hornear y la canela con movimientos envolventes.",
+      "Verter en un molde engrasado y hornear a 180°C por 40-45 minutos.",
+      "Dejar enfriar antes de desmoldar; opcionalmente cubrir con glaseado de queso crema."
+    ]
+  },
+  {
+    "id": "natill-casera-version-sencilla",
+    "nombre": "Natillа Casera (versión sencilla)",
+    "tiempo": 30,
+    "porciones": 8,
+    "tags": [
+      "vegetariano",
+      "postre",
+      "economico"
+    ],
+    "ingredientes": [
+      "4 tazas de leche",
+      "1 taza de maicena",
+      "1 taza de panela raspada o azúcar",
+      "1 astilla de canela",
+      "Coco rallado al gusto (opcional)"
+    ],
+    "pasos": [
+      "Disolver la maicena en un poco de leche fría.",
+      "Calentar el resto de la leche con la panela y la canela.",
+      "Agregar la maicena disuelta poco a poco revolviendo constantemente para evitar grumos.",
+      "Cocinar a fuego medio hasta que espese notablemente.",
+      "Verter en un molde, dejar enfriar y refrigerar antes de cortar en cuadros."
+    ]
+  },
+  {
+    "id": "bocadillo-con-queso",
+    "nombre": "Bocadillo con Queso",
+    "tiempo": 2,
+    "porciones": 4,
+    "tags": [
+      "vegetariano",
+      "postre",
+      "economico",
+      "rapido"
+    ],
+    "ingredientes": [
+      "4 bocadillos de guayaba",
+      "200 g de queso campesino o costeño en trozos"
+    ],
+    "pasos": [
+      "Cortar el bocadillo en trozos medianos.",
+      "Cortar el queso en trozos similares.",
+      "Servir juntos como postre o merienda, sin necesidad de cocción."
+    ]
+  },
+  {
+    "id": "postre-de-natas",
+    "nombre": "Postre de Natas",
+    "tiempo": 30,
+    "porciones": 6,
+    "tags": [
+      "vegetariano",
+      "postre",
+      "economico"
+    ],
+    "ingredientes": [
+      "2 tazas de nata de leche recolectada",
+      "1 taza de panela raspada",
+      "1 taza de leche",
+      "1 astilla de canela"
+    ],
+    "pasos": [
+      "Derretir la panela con la leche y la canela a fuego bajo.",
+      "Agregar la nata y cocinar revolviendo constantemente hasta integrar y espesar.",
+      "Cocinar 10-12 minutos hasta obtener una consistencia cremosa.",
+      "Servir tibio o frío en platos pequeños."
+    ]
+  },
+  {
+    "id": "agua-de-panela-con-limon",
+    "nombre": "Agua de Panela con Limón",
+    "tiempo": 15,
+    "porciones": 4,
+    "tags": [
+      "vegetariano",
+      "economico",
+      "rapido"
+    ],
+    "ingredientes": [
+      "200 g de panela",
+      "4 tazas de agua",
+      "Jugo de 2 limones (opcional)"
+    ],
+    "pasos": [
+      "Calentar el agua con la panela hasta que se disuelva por completo.",
+      "Dejar hervir 5 minutos.",
+      "Servir caliente o dejar enfriar y agregar jugo de limón para tomar frío."
+    ]
+  },
+  {
+    "id": "avena-colombiana-helada",
+    "nombre": "Avena Colombiana Helada",
+    "tiempo": 85,
+    "porciones": 4,
+    "tags": [
+      "vegetariano",
+      "economico"
+    ],
+    "ingredientes": [
+      "1 taza de avena en hojuelas",
+      "4 tazas de leche",
+      "1 astilla de canela",
+      "Azúcar o panela al gusto"
+    ],
+    "pasos": [
+      "Cocinar la avena en la leche con canela a fuego bajo por 12-15 minutos.",
+      "Endulzar al gusto y dejar enfriar.",
+      "Refrigerar al menos 1 hora.",
+      "Servir bien fría, opcionalmente licuada para una textura más suave."
+    ]
+  },
+  {
+    "id": "sopa-de-verduras-casera",
+    "nombre": "Sopa de Verduras Casera",
+    "tiempo": 40,
+    "porciones": 6,
+    "tags": [
+      "vegetariano",
+      "sopa",
+      "economico",
+      "saludable"
+    ],
+    "ingredientes": [
+      "1 zanahoria",
+      "1 papa",
+      "1 taza de arveja",
+      "1/2 repollo picado",
+      "1 cebolla larga",
+      "2 dientes de ajo",
+      "Cilantro al gusto"
+    ],
+    "pasos": [
+      "Sofreír cebolla y ajo en un poco de aceite.",
+      "Agregar agua y todas las verduras picadas.",
+      "Cocinar 20-25 minutos hasta que las verduras estén blandas.",
+      "Ajustar sal y servir con cilantro fresco."
+    ]
+  },
+  {
+    "id": "pure-de-papa-con-mantequilla",
+    "nombre": "Puré de Papa con Mantequilla",
+    "tiempo": 30,
+    "porciones": 4,
+    "tags": [
+      "vegetariano",
+      "economico"
+    ],
+    "ingredientes": [
+      "4 papas grandes",
+      "1/2 taza de leche",
+      "2 cdas de mantequilla",
+      "Sal al gusto"
+    ],
+    "pasos": [
+      "Cocinar las papas peladas en agua con sal hasta que estén muy blandas.",
+      "Escurrir y triturar con un pisapapas o tenedor.",
+      "Agregar la leche caliente y la mantequilla, mezclando hasta obtener una textura suave.",
+      "Servir caliente como acompañamiento de carnes."
+    ]
+  },
+  {
+    "id": "espagueti-a-la-bolonesa-criolla",
+    "nombre": "Espagueti a la Boloñesa Criolla",
+    "tiempo": 45,
+    "porciones": 5,
+    "tags": [
+      "con-carne"
+    ],
+    "ingredientes": [
+      "400 g de espagueti",
+      "500 g de carne molida",
+      "1 taza de salsa de tomate",
+      "1 cebolla",
+      "2 dientes de ajo",
+      "1 zanahoria rallada (opcional)",
+      "Queso parmesano al gusto"
+    ],
+    "pasos": [
+      "Sofreír cebolla y ajo, agregar la carne molida y dorar bien.",
+      "Añadir la salsa de tomate y la zanahoria rallada; cocinar 15-20 minutos a fuego bajo.",
+      "Cocinar el espagueti en agua con sal según las instrucciones del paquete.",
+      "Mezclar la pasta con la salsa boloñesa y servir con queso parmesano."
+    ]
+  },
+  {
+    "id": "filete-de-pescado-al-ajillo",
+    "nombre": "Filete de Pescado al Ajillo",
+    "tiempo": 25,
+    "porciones": 4,
+    "tags": [
+      "con-pescado",
+      "rapido",
+      "saludable"
+    ],
+    "ingredientes": [
+      "4 filetes de pescado blanco",
+      "4 dientes de ajo picados",
+      "Jugo de 1 limón",
+      "Perejil o cilantro al gusto",
+      "Aceite de oliva",
+      "Sal y pimienta"
+    ],
+    "pasos": [
+      "Sazonar los filetes con sal, pimienta y limón.",
+      "Calentar aceite de oliva en una sartén y dorar el ajo picado sin quemarlo.",
+      "Agregar los filetes y cocinar 3-4 minutos por lado.",
+      "Bañar con el aceite de ajo y espolvorear perejil o cilantro antes de servir.",
+      "Acompañar con arroz o papa al vapor."
+    ]
+  },
+  {
+    "id": "tortilla-de-papa-y-huevo-criolla",
+    "nombre": "Tortilla de Papa y Huevo Criolla",
+    "tiempo": 35,
+    "porciones": 4,
+    "tags": [
+      "vegetariano",
+      "desayuno",
+      "economico",
+      "saludable"
+    ],
+    "ingredientes": [
+      "3 papas medianas en rodajas finas",
+      "5 huevos",
+      "1 cebolla en rodajas",
+      "Sal y pimienta al gusto",
+      "Aceite para freír"
+    ],
+    "pasos": [
+      "Freír las rodajas de papa y cebolla a fuego bajo hasta que estén blandas (no doradas).",
+      "Batir los huevos con sal y pimienta.",
+      "Mezclar la papa y cebolla escurridas con el huevo batido.",
+      "Cocinar en sartén a fuego bajo, tapado, hasta que cuaje por un lado; voltear con ayuda de un plato y cocinar el otro lado.",
+      "Servir tibia, en porciones."
+    ]
+  }
+];
+
+// Lista curada de ingredientes base para el filtro. Los ingredientes de cada
+// receta ahora incluyen cantidades (ej. "1 kg de pechuga de pollo"), así que
+// el filtro busca por coincidencia parcial (ver cumpleIngredientes más abajo).
+const TODOS_LOS_INGREDIENTES = [
+  "Pollo", "Gallina", "Res", "Carne molida", "Costilla", "Cerdo", "Chicharrón",
+  "Chorizo", "Pescado", "Mojarra", "Trucha", "Bagre", "Camarón", "Atún",
+  "Huevo", "Papa", "Papa criolla", "Yuca", "Plátano", "Arracacha", "Mazorca",
+  "Arroz", "Fríjol", "Lenteja", "Garbanzo", "Pasta", "Queso", "Crema de leche",
+  "Leche", "Cebolla", "Tomate", "Ajo", "Zanahoria", "Cilantro", "Guascas",
+  "Aguacate", "Pimentón", "Repollo", "Ahuyama", "Panela",
+];
+
+const TAGS = [
+  { id: "rapido", label: "Rápido" },
+  { id: "economico", label: "Económico" },
+  { id: "saludable", label: "Saludable" },
+  { id: "vegetariano", label: "Vegetariano" },
+  { id: "con-pollo", label: "Con pollo" },
+  { id: "con-carne", label: "Con carne" },
+  { id: "con-cerdo", label: "Con cerdo" },
+  { id: "con-pescado", label: "Con pescado" },
+  { id: "sopa", label: "Sopa" },
+  { id: "desayuno", label: "Desayuno" },
+  { id: "postre", label: "Postre" },
+];
+
+// ---------------------------------------------------------------------------
+
+export default function App() {
+  const [vista, setVista] = useState("inicio"); // inicio | favoritos | mercado
+  const [ingredientesTengo, setIngredientesTengo] = useState([]);
+  const [tagsActivos, setTagsActivos] = useState([]);
+  const [buscarIngrediente, setBuscarIngrediente] = useState("");
+  const [mostrarFiltros, setMostrarFiltros] = useState(false);
+
+  const [recetaActual, setRecetaActual] = useState(null);
+  const [girando, setGirando] = useState(false);
+  const [nombrePreview, setNombrePreview] = useState("");
+
+  const [favoritos, setFavoritos] = useState([]);
+  const [mercado, setMercado] = useState({}); // { ingrediente: boolean(comprado) }
+  const [cargado, setCargado] = useState(false);
+  const intervalRef = useRef(null);
+
+  // Cargar datos persistidos
+  useEffect(() => {
+    (async () => {
+      try {
+        const fav = await window.storage.get("favoritos", false);
+        if (fav?.value) setFavoritos(JSON.parse(fav.value));
+      } catch (e) {}
+      try {
+        const mer = await window.storage.get("mercado", false);
+        if (mer?.value) setMercado(JSON.parse(mer.value));
+      } catch (e) {}
+      setCargado(true);
+    })();
+  }, []);
+
+  useEffect(() => {
+    if (!cargado) return;
+    window.storage.set("favoritos", JSON.stringify(favoritos), false).catch(() => {});
+  }, [favoritos, cargado]);
+
+  useEffect(() => {
+    if (!cargado) return;
+    window.storage.set("mercado", JSON.stringify(mercado), false).catch(() => {});
+  }, [mercado, cargado]);
+
+  function recetasFiltradas() {
+    return RECETAS.filter((r) => {
+      const cumpleTags = tagsActivos.length === 0 || tagsActivos.every((t) => r.tags.includes(t));
+      const cumpleIngredientes =
+        ingredientesTengo.length === 0 ||
+        ingredientesTengo.some((i) =>
+          r.ingredientes.some((ing) => ing.toLowerCase().includes(i.toLowerCase()))
+        );
+      return cumpleTags && cumpleIngredientes;
+    });
+  }
+
+  function sugerir() {
+    const pool = recetasFiltradas();
+    const usar = pool.length > 0 ? pool : RECETAS;
+    if (girando) return;
+    setGirando(true);
+    let count = 0;
+    intervalRef.current = setInterval(() => {
+      const r = usar[Math.floor(Math.random() * usar.length)];
+      setNombrePreview(r.nombre);
+      count++;
+      if (count > 10) {
+        clearInterval(intervalRef.current);
+        const final = usar[Math.floor(Math.random() * usar.length)];
+        setRecetaActual(final);
+        setGirando(false);
+      }
+    }, 90);
+  }
+
+  function toggleFavorito(receta) {
+    setFavoritos((prev) =>
+      prev.some((f) => f.id === receta.id)
+        ? prev.filter((f) => f.id !== receta.id)
+        : [...prev, receta]
+    );
+  }
+
+  function agregarAlMercado(receta) {
+    setMercado((prev) => {
+      const copia = { ...prev };
+      receta.ingredientes.forEach((ing) => {
+        if (!(ing in copia)) copia[ing] = false;
+      });
+      return copia;
+    });
+  }
+
+  function toggleIngrediente(ing) {
+    setIngredientesTengo((prev) =>
+      prev.includes(ing) ? prev.filter((i) => i !== ing) : [...prev, ing]
+    );
+  }
+
+  function toggleTag(tag) {
+    setTagsActivos((prev) => (prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]));
+  }
+
+  const esFavorito = recetaActual && favoritos.some((f) => f.id === recetaActual.id);
+  const ingredientesFiltrados = TODOS_LOS_INGREDIENTES.filter((i) =>
+    i.toLowerCase().includes(buscarIngrediente.toLowerCase())
+  );
+  const itemsMercado = Object.keys(mercado);
+
+  return (
+    <div className="min-h-screen w-full flex items-start justify-center py-6 px-3" style={{ background: "#EFE7D2" }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap');
+        .font-display { font-family: 'Fraunces', serif; }
+        .font-body { font-family: 'Work Sans', sans-serif; }
+        .font-mono { font-family: 'IBM Plex Mono', monospace; }
+        @keyframes spinPlate { 0% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(8deg) scale(1.02); } 100% { transform: rotate(0deg) scale(1); } }
+        .spinning { animation: spinPlate 0.18s ease-in-out infinite; }
+        @keyframes popIn { from { opacity: 0; transform: translateY(6px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        .pop-in { animation: popIn 0.35s ease-out; }
+      `}</style>
+
+      {/* Marco tipo teléfono */}
+      <div
+        className="w-full max-w-sm rounded-[2.5rem] overflow-hidden shadow-2xl border-[6px]"
+        style={{ background: "#FFFDF7", borderColor: "#2B211B", minHeight: "780px" }}
+      >
+        {/* Notch */}
+        <div className="flex justify-center pt-2 pb-1" style={{ background: "#2B211B" }}>
+          <div className="w-24 h-4 rounded-full" style={{ background: "#2B211B" }} />
+        </div>
+
+        {/* Header */}
+        <div className="px-5 pt-5 pb-4" style={{ background: "#2B211B" }}>
+          <div className="flex items-center gap-2">
+            <ChefHat size={22} color="#D9A441" />
+            <h1 className="font-display text-2xl" style={{ color: "#FBF6E9" }}>
+              ¿Qué almuerzo hago hoy?
+            </h1>
+          </div>
+          <p className="font-body text-xs mt-1" style={{ color: "#C9BFAE" }}>
+            Recetas sencillas para el día a día en Colombia
+          </p>
+        </div>
+
+        {/* Contenido */}
+        <div className="px-5 pb-24 pt-5" style={{ minHeight: "560px" }}>
+          {vista === "inicio" && (
+            <>
+              {/* Botón principal */}
+              <button
+                onClick={sugerir}
+                disabled={girando}
+                className="w-full rounded-2xl py-4 flex items-center justify-center gap-2 font-body font-semibold text-base shadow-md active:scale-[0.98] transition-transform"
+                style={{ background: "#C1432E", color: "#FFFDF7" }}
+              >
+                <Shuffle size={18} />
+                {girando ? "Pensando..." : "Sugiéreme algo"}
+              </button>
+
+              {/* Filtros toggle */}
+              <button
+                onClick={() => setMostrarFiltros((v) => !v)}
+                className="w-full mt-3 text-sm font-body font-medium flex items-center justify-center gap-1"
+                style={{ color: "#4C6444" }}
+              >
+                {mostrarFiltros ? "Ocultar filtros" : "Filtrar por ingredientes o tipo"}
+                {(ingredientesTengo.length > 0 || tagsActivos.length > 0) && (
+                  <span
+                    className="font-mono text-[10px] px-1.5 py-0.5 rounded-full"
+                    style={{ background: "#D9A441", color: "#2B211B" }}
+                  >
+                    {ingredientesTengo.length + tagsActivos.length}
+                  </span>
+                )}
+              </button>
+
+              {mostrarFiltros && (
+                <div className="mt-3 rounded-2xl p-4 pop-in" style={{ background: "#F4EEDD" }}>
+                  <p className="font-body text-xs font-semibold mb-2" style={{ color: "#2B211B" }}>
+                    Tipo de almuerzo
+                  </p>
+                  <div className="flex flex-wrap gap-1.5 mb-4">
+                    {TAGS.map((t) => (
+                      <button
+                        key={t.id}
+                        onClick={() => toggleTag(t.id)}
+                        className="text-xs font-body px-2.5 py-1 rounded-full border"
+                        style={
+                          tagsActivos.includes(t.id)
+                            ? { background: "#4C6444", color: "#FFFDF7", borderColor: "#4C6444" }
+                            : { background: "transparent", color: "#4C6444", borderColor: "#4C6444" }
+                        }
+                      >
+                        {t.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  <p className="font-body text-xs font-semibold mb-2" style={{ color: "#2B211B" }}>
+                    Ingredientes que tienes
+                  </p>
+                  <div className="relative mb-2">
+                    <Search size={14} className="absolute left-2 top-2.5" style={{ color: "#8A8071" }} />
+                    <input
+                      value={buscarIngrediente}
+                      onChange={(e) => setBuscarIngrediente(e.target.value)}
+                      placeholder="Buscar ingrediente..."
+                      className="w-full text-xs font-body pl-7 pr-2 py-2 rounded-lg border outline-none"
+                      style={{ borderColor: "#D9CFB8", background: "#FFFDF7" }}
+                    />
+                  </div>
+                  <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto">
+                    {ingredientesFiltrados.map((ing) => (
+                      <button
+                        key={ing}
+                        onClick={() => toggleIngrediente(ing)}
+                        className="text-xs font-body px-2.5 py-1 rounded-full border"
+                        style={
+                          ingredientesTengo.includes(ing)
+                            ? { background: "#D9A441", color: "#2B211B", borderColor: "#D9A441" }
+                            : { background: "transparent", color: "#8A8071", borderColor: "#D9CFB8" }
+                        }
+                      >
+                        {ing}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Tarjeta de receta */}
+              <div
+                className={`mt-4 rounded-2xl p-5 border ${girando ? "spinning" : "pop-in"}`}
+                style={{ background: "#FFFDF7", borderColor: "#E8DFC8", minHeight: "220px" }}
+              >
+                {!recetaActual && !girando && (
+                  <div className="flex flex-col items-center justify-center h-full py-10 text-center">
+                    <ChefHat size={28} style={{ color: "#D9CFB8" }} />
+                    <p className="font-body text-sm mt-2" style={{ color: "#8A8071" }}>
+                      Toca "Sugiéreme algo" y te decimos qué preparar hoy.
+                    </p>
+                  </div>
+                )}
+
+                {girando && (
+                  <div className="flex flex-col items-center justify-center h-full py-10 text-center">
+                    <p className="font-display text-lg" style={{ color: "#2B211B" }}>
+                      {nombrePreview}
+                    </p>
+                  </div>
+                )}
+
+                {recetaActual && !girando && (
+                  <div>
+                    <div className="flex items-start justify-between gap-2">
+                      <h2 className="font-display text-xl leading-snug" style={{ color: "#2B211B" }}>
+                        {recetaActual.nombre}
+                      </h2>
+                      <button onClick={() => toggleFavorito(recetaActual)} className="shrink-0 mt-1">
+                        <Heart
+                          size={20}
+                          fill={esFavorito ? "#C1432E" : "none"}
+                          color={esFavorito ? "#C1432E" : "#8A8071"}
+                        />
+                      </button>
+                    </div>
+
+                    <div className="flex items-center gap-3 mt-2 font-mono text-[11px]" style={{ color: "#8A8071" }}>
+                      <span className="flex items-center gap-1">
+                        <Clock size={12} /> {recetaActual.tiempo} min
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Users size={12} /> {recetaActual.porciones} porciones
+                      </span>
+                    </div>
+
+                    <div className="flex flex-wrap gap-1 mt-2">
+                      {recetaActual.tags.map((t) => (
+                        <span
+                          key={t}
+                          className="text-[10px] font-body px-2 py-0.5 rounded-full"
+                          style={{ background: "#F4EEDD", color: "#4C6444" }}
+                        >
+                          {TAGS.find((x) => x.id === t)?.label || t}
+                        </span>
+                      ))}
+                    </div>
+
+                    <p className="font-body text-xs font-semibold mt-4 mb-1" style={{ color: "#2B211B" }}>
+                      Ingredientes
+                    </p>
+                    <ul className="font-body text-sm space-y-0.5" style={{ color: "#4A4136" }}>
+                      {recetaActual.ingredientes.map((ing) => (
+                        <li key={ing}>• {ing}</li>
+                      ))}
+                    </ul>
+
+                    <p className="font-body text-xs font-semibold mt-4 mb-1" style={{ color: "#2B211B" }}>
+                      Preparación
+                    </p>
+                    <ol className="font-body text-sm space-y-1.5" style={{ color: "#4A4136" }}>
+                      {recetaActual.pasos.map((paso, idx) => (
+                        <li key={idx}>
+                          <span className="font-mono text-[11px]" style={{ color: "#C1432E" }}>
+                            {idx + 1}.{" "}
+                          </span>
+                          {paso}
+                        </li>
+                      ))}
+                    </ol>
+
+                    <button
+                      onClick={() => agregarAlMercado(recetaActual)}
+                      className="w-full mt-4 rounded-xl py-2.5 flex items-center justify-center gap-2 font-body text-sm font-semibold"
+                      style={{ background: "#4C6444", color: "#FFFDF7" }}
+                    >
+                      <ShoppingCart size={15} />
+                      Agregar a lista de mercado
+                    </button>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+
+          {vista === "favoritos" && (
+            <div className="pop-in">
+              <h2 className="font-display text-lg mb-3" style={{ color: "#2B211B" }}>
+                Tus favoritos
+              </h2>
+              {favoritos.length === 0 && (
+                <p className="font-body text-sm" style={{ color: "#8A8071" }}>
+                  Aún no has guardado ningún almuerzo. Toca el corazón en una receta para guardarla aquí.
+                </p>
+              )}
+              <div className="space-y-2">
+                {favoritos.map((r) => (
+                  <div
+                    key={r.id}
+                    className="rounded-xl p-3 border flex items-center justify-between gap-2"
+                    style={{ background: "#FFFDF7", borderColor: "#E8DFC8" }}
+                  >
+                    <button
+                      className="text-left flex-1"
+                      onClick={() => {
+                        setRecetaActual(r);
+                        setVista("inicio");
+                      }}
+                    >
+                      <p className="font-body text-sm font-semibold" style={{ color: "#2B211B" }}>
+                        {r.nombre}
+                      </p>
+                      <p className="font-mono text-[10px]" style={{ color: "#8A8071" }}>
+                        {r.tiempo} min · {r.porciones} porciones
+                      </p>
+                    </button>
+                    <button onClick={() => toggleFavorito(r)}>
+                      <Heart size={18} fill="#C1432E" color="#C1432E" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {vista === "mercado" && (
+            <div className="pop-in">
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="font-display text-lg" style={{ color: "#2B211B" }}>
+                  Lista de mercado
+                </h2>
+                {itemsMercado.length > 0 && (
+                  <button
+                    onClick={() => setMercado({})}
+                    className="text-xs font-body flex items-center gap-1"
+                    style={{ color: "#C1432E" }}
+                  >
+                    <Trash2 size={12} /> Vaciar
+                  </button>
+                )}
+              </div>
+              {itemsMercado.length === 0 && (
+                <p className="font-body text-sm" style={{ color: "#8A8071" }}>
+                  Cuando agregues una receta a tu lista, los ingredientes aparecerán aquí.
+                </p>
+              )}
+              <div className="space-y-1.5">
+                {itemsMercado.map((ing) => (
+                  <button
+                    key={ing}
+                    onClick={() => setMercado((prev) => ({ ...prev, [ing]: !prev[ing] }))}
+                    className="w-full flex items-center gap-2 rounded-lg p-2.5 border text-left"
+                    style={{ background: "#FFFDF7", borderColor: "#E8DFC8" }}
+                  >
+                    <span
+                      className="w-5 h-5 rounded-md border flex items-center justify-center shrink-0"
+                      style={
+                        mercado[ing]
+                          ? { background: "#4C6444", borderColor: "#4C6444" }
+                          : { borderColor: "#D9CFB8" }
+                      }
+                    >
+                      {mercado[ing] && <Check size={13} color="#FFFDF7" />}
+                    </span>
+                    <span
+                      className="font-body text-sm"
+                      style={{
+                        color: mercado[ing] ? "#8A8071" : "#2B211B",
+                        textDecoration: mercado[ing] ? "line-through" : "none",
+                      }}
+                    >
+                      {ing}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Barra de navegación inferior */}
+        <div
+          className="fixed-bottom-nav flex items-center justify-around py-3 border-t"
+          style={{
+            background: "#FFFDF7",
+            borderColor: "#E8DFC8",
+            position: "relative",
+            marginTop: "-72px",
+          }}
+        >
+          {[
+            { id: "inicio", label: "Inicio", icon: Shuffle },
+            { id: "favoritos", label: "Favoritos", icon: Heart },
+            { id: "mercado", label: "Mercado", icon: ShoppingCart },
+          ].map((tab) => {
+            const Icon = tab.icon;
+            const activo = vista === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setVista(tab.id)}
+                className="flex flex-col items-center gap-0.5 px-3"
+              >
+                <Icon size={18} color={activo ? "#C1432E" : "#8A8071"} fill={tab.id === "favoritos" && activo ? "#C1432E" : "none"} />
+                <span
+                  className="font-body text-[10px] font-medium"
+                  style={{ color: activo ? "#C1432E" : "#8A8071" }}
+                >
+                  {tab.label}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
